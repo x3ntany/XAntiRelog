@@ -22,6 +22,7 @@ import me.xentany.antirelog.manager.CooldownManager.CooldownType;
 import me.xentany.antirelog.manager.PvPManager;
 import me.xentany.antirelog.util.Utils;
 import me.xentany.antirelog.util.VersionUtils;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.concurrent.TimeUnit;
 
@@ -35,36 +36,29 @@ public class CooldownListener implements Listener {
     this.cooldownManager = cooldownManager;
     this.pvpManager = pvpManager;
     this.settings = settings;
-    registerEntityResurrectEvent(plugin);
   }
 
-  private void registerEntityResurrectEvent(Plugin plugin) {
-    if (VersionUtils.isVersion(11)) {
-      plugin.getServer().getPluginManager().registerEvents(new Listener() {
-        @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
-        public void onResurrect(EntityResurrectEvent event) {
-          if (event.getEntityType() != EntityType.PLAYER) {
-            return;
-          }
-          Player player = (Player) event.getEntity();
-          long cooldownTime = settings.getTotemCooldown();
-          if (cooldownTime == 0 || pvpManager.isBypassed(player)) {
-            return;
-          }
-          if (cooldownTime <= -1) {
-            cancelEventIfInPvp(event, CooldownType.TOTEM, player);
-            return;
-          }
-          cooldownTime = cooldownTime * 1000;
-          if (checkCooldown(player, CooldownType.TOTEM, cooldownTime)) {
-            event.setCancelled(true);
-            return;
-          }
-          cooldownManager.addCooldown(player, CooldownType.TOTEM);
-          addItemCooldownIfNeeded(player, CooldownType.TOTEM);
-        }
-      }, plugin);
+  @EventHandler
+  public void onEntityResurrect(final @NotNull EntityResurrectEvent event) {
+    if (event.getEntityType() != EntityType.PLAYER) {
+      return;
     }
+    Player player = (Player) event.getEntity();
+    long cooldownTime = settings.getTotemCooldown();
+    if (cooldownTime == 0 || pvpManager.isBypassed(player)) {
+      return;
+    }
+    if (cooldownTime <= -1) {
+      cancelEventIfInPvp(event, CooldownType.TOTEM, player);
+      return;
+    }
+    cooldownTime = cooldownTime * 1000;
+    if (checkCooldown(player, CooldownType.TOTEM, cooldownTime)) {
+      event.setCancelled(true);
+      return;
+    }
+    cooldownManager.addCooldown(player, CooldownType.TOTEM);
+    addItemCooldownIfNeeded(player, CooldownType.TOTEM);
   }
 
   @EventHandler
