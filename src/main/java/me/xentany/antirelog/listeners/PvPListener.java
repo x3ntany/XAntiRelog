@@ -2,15 +2,30 @@ package me.xentany.antirelog.listeners;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.entity.*;
+import org.bukkit.entity.AreaEffectCloud;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Firework;
+import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Player;
+import org.bukkit.entity.Projectile;
+import org.bukkit.entity.TNTPrimed;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
-import org.bukkit.event.entity.*;
-import org.bukkit.event.player.*;
+import org.bukkit.event.entity.EntityCombustByEntityEvent;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityShootBowEvent;
+import org.bukkit.event.entity.PlayerDeathEvent;
+import org.bukkit.event.entity.PotionSplashEvent;
+import org.bukkit.event.player.PlayerCommandPreprocessEvent;
+import org.bukkit.event.player.PlayerInteractEntityEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerKickEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import org.bukkit.metadata.FixedMetadataValue;
-import org.bukkit.metadata.MetadataValue;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
@@ -18,11 +33,11 @@ import me.xentany.antirelog.config.Messages;
 import me.xentany.antirelog.config.Settings;
 import me.xentany.antirelog.manager.PvPManager;
 import me.xentany.antirelog.util.Utils;
-import me.xentany.antirelog.util.VersionUtils;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class PvPListener implements Listener {
@@ -75,7 +90,7 @@ public class PvPListener implements Listener {
 
   @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
   public void onShootBow(EntityShootBowEvent event) {
-    if (VersionUtils.isVersion(14) && event.getProjectile() instanceof Firework && event.getEntity().getType() == EntityType.PLAYER) {
+    if (event.getProjectile() instanceof Firework && event.getEntity().getType() == EntityType.PLAYER) {
       event.getProjectile().setMetadata(META_KEY, new FixedMetadataValue(plugin, event.getEntity().getUniqueId()));
     }
   }
@@ -105,7 +120,7 @@ public class PvPListener implements Listener {
         return;
       }
 
-      if ((VersionUtils.isVersion(9) && ev.getCause() == TeleportCause.CHORUS_FRUIT) || ev.getCause() == TeleportCause.ENDER_PEARL) {
+      if ((ev.getCause() == TeleportCause.CHORUS_FRUIT) || ev.getCause() == TeleportCause.ENDER_PEARL) {
         allowedTeleports.put(ev.getPlayer(), new AtomicInteger(0));
         return;
       }
@@ -231,37 +246,17 @@ public class PvPListener implements Listener {
     }
   }
 
-  private Player getDamager(Entity damager) {
-    if (damager instanceof Player) {
-      return (Player) damager;
-    } else if (damager instanceof Projectile) {
-      Projectile proj = (Projectile) damager;
-      if (proj.getShooter() instanceof Player) {
-        return (Player) proj.getShooter();
-      }
-    } else if (damager instanceof TNTPrimed) {
-      TNTPrimed tntPrimed = (TNTPrimed) damager;
-      return getDamager(tntPrimed.getSource());
-    } else if (VersionUtils.isVersion(9) && damager instanceof AreaEffectCloud) {
-      AreaEffectCloud aec = (AreaEffectCloud) damager;
-      if (aec.getSource() instanceof Player) {
-        return (Player) aec.getSource();
-      }
-    } else if (VersionUtils.isVersion(14) && damager instanceof Firework) {
-      if (damager.hasMetadata(META_KEY)) {
-        MetadataValue metadata = null;
-        for (MetadataValue metadataValue : damager.getMetadata(META_KEY)) {
-          if (metadataValue.getOwningPlugin() == plugin) {
-            metadata = metadataValue;
-            break;
-          }
-        }
-        if (metadata != null) {
-          damager.removeMetadata(META_KEY, plugin);
-          return Bukkit.getPlayer((UUID) metadata.value());
-        }
-      }
-    }
-    return null;
+  private @Nullable Player getDamager(final @NotNull Entity damager) {
+    return switch (damager) {
+      case Player player -> player;
+      case Projectile projectile -> extractPlayer(projectile.getShooter());
+      case TNTPrimed tntPrimed -> extractPlayer(tntPrimed.getSource());
+      case AreaEffectCloud areaEffectCloud -> extractPlayer(areaEffectCloud.getSource());
+      default -> null;
+    };
+  }
+
+  private @Nullable Player extractPlayer(final @Nullable Object source) {
+    return source instanceof final Player player ? player : null;
   }
 }

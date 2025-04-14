@@ -8,7 +8,6 @@ import org.bukkit.entity.Player;
 import me.xentany.antirelog.AntiRelogPlugin;
 import me.xentany.antirelog.config.Settings;
 import me.xentany.antirelog.util.ProtocolLibUtils;
-import me.xentany.antirelog.util.VersionUtils;
 
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -127,11 +126,11 @@ public class CooldownManager {
 
   public enum CooldownType {
     GOLDEN_APPLE(Material.GOLDEN_APPLE, Settings::getGoldenAppleCooldown),
-    ENC_GOLDEN_APPLE(VersionUtils.isVersion(13) ? Material.ENCHANTED_GOLDEN_APPLE : Material.GOLDEN_APPLE, Settings::getEnchantedGoldenAppleCooldown),
+    ENC_GOLDEN_APPLE(Material.ENCHANTED_GOLDEN_APPLE, Settings::getEnchantedGoldenAppleCooldown),
     ENDER_PEARL(Material.ENDER_PEARL, Settings::getEnderPearlCooldown),
-    CHORUS(Material.matchMaterial("CHORUS_FRUIT"), Settings::getСhorusCooldown),
-    TOTEM(VersionUtils.isVersion(13) ? Material.TOTEM_OF_UNDYING : Material.matchMaterial("TOTEM"), Settings::getTotemCooldown),
-    FIREWORK(VersionUtils.isVersion(13) ? Material.FIREWORK_ROCKET : Material.matchMaterial("FIREWORK"), Settings::getFireworkCooldown);
+    CHORUS(Material.CHORUS_FRUIT, Settings::getСhorusCooldown),
+    TOTEM(Material.TOTEM_OF_UNDYING, Settings::getTotemCooldown),
+    FIREWORK(Material.FIREWORK_ROCKET, Settings::getFireworkCooldown);
 
     public static CooldownType[] values = values();
 

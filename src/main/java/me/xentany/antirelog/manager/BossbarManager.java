@@ -7,7 +7,6 @@ import org.bukkit.boss.BossBar;
 import org.bukkit.entity.Player;
 import me.xentany.antirelog.config.Settings;
 import me.xentany.antirelog.util.Utils;
-import me.xentany.antirelog.util.VersionUtils;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -23,7 +22,7 @@ public class BossbarManager {
 
   public void createBossBars() {
     bossBars.clear();
-    if (VersionUtils.isVersion(9) && settings.getPvpTime() > 0) {
+    if (settings.getPvpTime() > 0) {
       String title = Utils.color(settings.getMessages().getInPvpBossbar());
       if (!title.isEmpty()) {
         double add = 1d / (double) settings.getPvpTime();

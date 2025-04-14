@@ -18,22 +18,23 @@ import me.xentany.antirelog.manager.CooldownManager;
 import me.xentany.antirelog.manager.CooldownManager.CooldownType;
 import me.xentany.antirelog.manager.PvPManager;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 import java.util.List;
 
 public class ProtocolLibUtils {
 
-  private static boolean hasProtocolLib;
   private static Class<?> ITEM_CLASS;
   private static MethodAccessor getItem = null;
   private static MethodAccessor getMaterial = null;
 
   static {
-    hasProtocolLib = Bukkit.getPluginManager().isPluginEnabled("ProtocolLib") && VersionUtils.isVersion(9);
+    boolean hasProtocolLib = Bukkit.getPluginManager().isPluginEnabled("ProtocolLib");
     if (hasProtocolLib) {
-      boolean is117 = VersionUtils.isVersion(17);
-      ITEM_CLASS = MinecraftReflection.getMinecraftClass(is117 ? "world.item.Item" : "Item");
+      try {
+        ITEM_CLASS = MinecraftReflection.getMinecraftClass("Item");
+      } catch (final Exception exception) {
+        ITEM_CLASS = MinecraftReflection.getMinecraftClass("world.item.Item");
+      }
       getItem = Accessors.getMethodAccessor(MinecraftReflection
               .getCraftBukkitClass("util.CraftMagicNumbers"),
           "getItem", Material.class);

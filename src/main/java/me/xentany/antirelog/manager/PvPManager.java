@@ -17,7 +17,6 @@ import me.xentany.antirelog.event.PvpStoppedEvent;
 import me.xentany.antirelog.event.PvpTimeUpdateEvent;
 import me.xentany.antirelog.util.CommandMapUtils;
 import me.xentany.antirelog.util.Utils;
-import me.xentany.antirelog.util.VersionUtils;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -291,11 +290,8 @@ public class PvPManager {
     if (title == null && subtitle == null) {
       return;
     }
-    if (VersionUtils.isVersion(11)) {
-      player.sendTitle(title, subtitle, 10, 30, 10);
-    } else {
-      player.sendTitle(title, subtitle);
-    }
+
+    player.sendTitle(title, subtitle, 10, 30, 10);
   }
 
   private void sendActionBar(@NotNull Player player, String message) {

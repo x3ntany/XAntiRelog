@@ -31,8 +31,6 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.stream.Stream;
 
-import me.xentany.antirelog.util.VersionUtils;
-
 public class AntiRelogPlugin extends JavaPlugin {
   private Settings settings;
   private PvPManager pvpManager;
@@ -193,7 +191,7 @@ public class AntiRelogPlugin extends JavaPlugin {
       Bukkit.getPluginManager().registerEvents(new EssentialsTeleportListener(pvpManager, settings), this);
     } catch (ClassNotFoundException e) {
     }
-    protocolLib = Bukkit.getPluginManager().isPluginEnabled("ProtocolLib") && VersionUtils.isVersion(9);
+    protocolLib = Bukkit.getPluginManager().isPluginEnabled("ProtocolLib");
   }
 
   public Settings getSettings() {
