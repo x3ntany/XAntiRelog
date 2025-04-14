@@ -1,5 +1,6 @@
 package me.xentany.antirelog.manager;
 
+import me.xentany.antirelog.Settings;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;
@@ -9,13 +10,11 @@ import org.bukkit.entity.Player;
 import org.codemc.worldguardwrapper.WorldGuardWrapper;
 import org.codemc.worldguardwrapper.region.IWrappedRegion;
 import me.xentany.antirelog.AntiRelogPlugin;
-import me.xentany.antirelog.config.Settings;
 import me.xentany.antirelog.event.PvpPreStartEvent;
 import me.xentany.antirelog.event.PvpPreStartEvent.PvPStatus;
 import me.xentany.antirelog.event.PvpStartedEvent;
 import me.xentany.antirelog.event.PvpStoppedEvent;
 import me.xentany.antirelog.event.PvpTimeUpdateEvent;
-import me.xentany.antirelog.util.CommandMapUtils;
 import me.xentany.antirelog.util.Utils;
 import org.jetbrains.annotations.NotNull;
 
@@ -23,7 +22,6 @@ import java.util.*;
 
 public class PvPManager {
 
-  private final Settings settings;
   private final AntiRelogPlugin plugin;
   private final Map<Player, Integer> pvpMap = new HashMap<>();
   private final Map<Player, Integer> silentPvpMap = new HashMap<>();
@@ -31,11 +29,10 @@ public class PvPManager {
   private final BossbarManager bossbarManager;
   private final Set<String> whiteListedCommands = new HashSet<>();
 
-  public PvPManager(Settings settings, AntiRelogPlugin plugin) {
-    this.settings = settings;
+  public PvPManager(AntiRelogPlugin plugin) {
     this.plugin = plugin;
-    this.powerUpsManager = new PowerUpsManager(settings);
-    this.bossbarManager = new BossbarManager(settings);
+    this.powerUpsManager = new PowerUpsManager();
+    this.bossbarManager = new BossbarManager();
     onPluginEnable();
   }
 
@@ -46,9 +43,9 @@ public class PvPManager {
 
   public void onPluginEnable() {
     whiteListedCommands.clear();
-    if (settings.isDisableCommandsInPvp() && !settings.getWhiteListedCommands().isEmpty()) {
-      settings.getWhiteListedCommands().forEach(wcommand -> {
-        Command command = CommandMapUtils.getCommand(wcommand);
+    if (Settings.IMP.DISABLE_COMMANDS_IN_PVP && !Settings.IMP.COMMANDS_WHITELIST.isEmpty()) {
+      Settings.IMP.COMMANDS_WHITELIST.forEach(wcommand -> {
+        Command command = Bukkit.getCommandMap().getCommand(wcommand);
         whiteListedCommands.add(wcommand.toLowerCase());
         if (command != null) {
           whiteListedCommands.add(command.getName().toLowerCase());
@@ -73,7 +70,7 @@ public class PvPManager {
       for (Player player : playersInPvp) {
         int currentTime = bypassed ? getTimeRemainingInPvPSilent(player) : getTimeRemainingInPvP(player);
         int timeRemaining = currentTime - 1;
-        if (timeRemaining <= 0 || (settings.isDisablePvpInIgnoredRegion() && isInIgnoredRegion(player))) {
+        if (timeRemaining <= 0 || (Settings.IMP.DISABLE_PVP_IN_IGNORED_REGION && isInIgnoredRegion(player))) {
           if (bypassed) {
             stopPvPSilent(player);
           } else {
@@ -129,7 +126,7 @@ public class PvPManager {
       return;
     }
 
-    if (!isPvPModeEnabled() && settings.isDisablePowerups()) {
+    if (!isPvPModeEnabled() && Settings.IMP.DISABLE_POWERUPS) {
       if (!isHasBypassPermission(attacker)) {
         powerUpsManager.disablePowerUpsWithRunCommands(attacker);
       }
@@ -171,7 +168,7 @@ public class PvPManager {
           updateDefenderAndCallEvent(defender, attacker, defenderBypassed);
           startPvp(attacker, attackerBypassed, true);
         }
-        Bukkit.getPluginManager().callEvent(new PvpStartedEvent(defender, attacker, settings.getPvpTime(), pvpStatus));
+        Bukkit.getPluginManager().callEvent(new PvpStartedEvent(defender, attacker, Settings.IMP.PVP_TIME, pvpStatus));
       }
       return;
     }
@@ -179,7 +176,7 @@ public class PvPManager {
     if (callPvpPreStartEvent(defender, attacker, pvpStatus)) {
       startPvp(attacker, attackerBypassed, true);
       startPvp(defender, defenderBypassed, false);
-      Bukkit.getPluginManager().callEvent(new PvpStartedEvent(defender, attacker, settings.getPvpTime(), pvpStatus));
+      Bukkit.getPluginManager().callEvent(new PvpStartedEvent(defender, attacker, Settings.IMP.PVP_TIME, pvpStatus));
     }
 
   }
@@ -187,16 +184,16 @@ public class PvPManager {
 
   private void startPvp(Player player, boolean bypassed, boolean attacker) {
     if (!bypassed) {
-      String message = Utils.color(settings.getMessages().getPvpStarted());
+      String message = Utils.color(Settings.IMP.MESSAGES.PVP_STARTED);
       if (!message.isEmpty()) {
         player.sendMessage(message);
       }
-      if (attacker && settings.isDisablePowerups()) {
+      if (attacker && Settings.IMP.DISABLE_POWERUPS) {
         powerUpsManager.disablePowerUpsWithRunCommands(player);
       }
       sendTitles(player, true);
     }
-    updatePvpMode(player, bypassed, settings.getPvpTime());
+    updatePvpMode(player, bypassed, Settings.IMP.PVP_TIME);
     player.setNoDamageTicks(0);
   }
 
@@ -206,11 +203,11 @@ public class PvPManager {
     } else {
       pvpMap.put(player, newTime);
       bossbarManager.setBossBar(player, newTime);
-      String actionBar = settings.getMessages().getInPvpActionbar();
+      String actionBar = Settings.IMP.MESSAGES.IN_PVP_ACTIONBAR;
       if (!actionBar.isEmpty()) {
         sendActionBar(player, Utils.color(Utils.replaceTime(actionBar, newTime)));
       }
-      if (settings.isDisablePowerups()) {
+      if (Settings.IMP.DISABLE_POWERUPS) {
         powerUpsManager.disablePowerUps(player);
       }
       //player.setNoDamageTicks(0);
@@ -218,7 +215,7 @@ public class PvPManager {
   }
 
   private boolean callPvpPreStartEvent(Player defender, Player attacker, PvPStatus pvpStatus) {
-    PvpPreStartEvent pvpPreStartEvent = new PvpPreStartEvent(defender, attacker, settings.getPvpTime(), pvpStatus);
+    PvpPreStartEvent pvpPreStartEvent = new PvpPreStartEvent(defender, attacker, Settings.IMP.PVP_TIME, pvpStatus);
     Bukkit.getPluginManager().callEvent(pvpPreStartEvent);
     if (pvpPreStartEvent.isCancelled()) {
       return false;
@@ -228,16 +225,16 @@ public class PvPManager {
 
   private void updateAttackerAndCallEvent(Player attacker, Player defender, boolean bypassed) {
     int oldTime = bypassed ? getTimeRemainingInPvPSilent(attacker) : getTimeRemainingInPvP(attacker);
-    updatePvpMode(attacker, bypassed, settings.getPvpTime());
-    PvpTimeUpdateEvent pvpTimeUpdateEvent = new PvpTimeUpdateEvent(attacker, oldTime, settings.getPvpTime());
+    updatePvpMode(attacker, bypassed, Settings.IMP.PVP_TIME);
+    PvpTimeUpdateEvent pvpTimeUpdateEvent = new PvpTimeUpdateEvent(attacker, oldTime, Settings.IMP.PVP_TIME);
     pvpTimeUpdateEvent.setDamagedPlayer(defender);
     Bukkit.getPluginManager().callEvent(pvpTimeUpdateEvent);
   }
 
   private void updateDefenderAndCallEvent(Player defender, Player attackedBy, boolean bypassed) {
     int oldTime = bypassed ? getTimeRemainingInPvPSilent(defender) : getTimeRemainingInPvP(defender);
-    updatePvpMode(defender, bypassed, settings.getPvpTime());
-    PvpTimeUpdateEvent pvpTimeUpdateEvent = new PvpTimeUpdateEvent(defender, oldTime, settings.getPvpTime());
+    updatePvpMode(defender, bypassed, Settings.IMP.PVP_TIME);
+    PvpTimeUpdateEvent pvpTimeUpdateEvent = new PvpTimeUpdateEvent(defender, oldTime, Settings.IMP.PVP_TIME);
     pvpTimeUpdateEvent.setDamagedBy(attackedBy);
     Bukkit.getPluginManager().callEvent(pvpTimeUpdateEvent);
   }
@@ -250,11 +247,11 @@ public class PvPManager {
   public void stopPvP(Player player) {
     stopPvPSilent(player);
     sendTitles(player, false);
-    String message = Utils.color(settings.getMessages().getPvpStopped());
+    String message = Utils.color(Settings.IMP.MESSAGES.PVP_STOPPED);
     if (!message.isEmpty()) {
       player.sendMessage(message);
     }
-    String actionBar = settings.getMessages().getPvpStoppedActionbar();
+    String actionBar = Settings.IMP.MESSAGES.PVP_STOPPED_ACTIONBAR;
     if (!actionBar.isEmpty()) {
       sendActionBar(player, Utils.color(actionBar));
     }
@@ -283,8 +280,8 @@ public class PvPManager {
   }
 
   private void sendTitles(Player player, boolean isPvpStarted) {
-    String title = isPvpStarted ? settings.getMessages().getPvpStartedTitle() : settings.getMessages().getPvpStoppedTitle();
-    String subtitle = isPvpStarted ? settings.getMessages().getPvpStartedSubtitle() : settings.getMessages().getPvpStoppedSubtitle();
+    String title = isPvpStarted ? Settings.IMP.MESSAGES.PVP_STARTED_TITLE : Settings.IMP.MESSAGES.PVP_STOPPED_TITLE;
+    String subtitle = isPvpStarted ? Settings.IMP.MESSAGES.PVP_STARTED_SUBTITLE : Settings.IMP.MESSAGES.PVP_STOPPED_SUBTITLE;
     title = title.isEmpty() ? null : Utils.color(title);
     subtitle = subtitle.isEmpty() ? null : Utils.color(subtitle);
     if (title == null && subtitle == null) {
@@ -299,7 +296,7 @@ public class PvPManager {
   }
 
   public boolean isPvPModeEnabled() {
-    return settings.getPvpTime() > 0;
+    return Settings.IMP.PVP_TIME > 0;
   }
 
   public boolean isBypassed(Player player) {
@@ -311,26 +308,24 @@ public class PvPManager {
   }
 
   public boolean isInIgnoredWorld(Player player) {
-    return settings.getDisabledWorlds().contains(player.getWorld().getName().toLowerCase());
+    return Settings.IMP.DISABLED_WORLDS.contains(player.getWorld().getName().toLowerCase());
   }
 
   public boolean isInIgnoredRegion(Player player) {
-    if (!plugin.isWorldguardEnabled() || settings.getIgnoredWgRegions().isEmpty()) {
+    if (!plugin.isWorldguardEnabled() || Settings.IMP.IGNORED_WORLDGUARD_REGIONS.isEmpty()) {
       return false;
     }
 
-    Set<String> regions = settings.getIgnoredWgRegions();
     Set<IWrappedRegion> wrappedRegions = WorldGuardWrapper.getInstance().getRegions(player.getLocation());
     if (wrappedRegions.isEmpty()) {
       return false;
     }
     for (IWrappedRegion region : wrappedRegions) {
-      if (regions.contains(region.getId().toLowerCase())) {
+      if (Settings.IMP.IGNORED_WORLDGUARD_REGIONS.contains(region.getId().toLowerCase())) {
         return true;
       }
     }
+
     return false;
-
-
   }
 }

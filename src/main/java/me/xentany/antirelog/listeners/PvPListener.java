@@ -1,5 +1,6 @@
 package me.xentany.antirelog.listeners;
 
+import me.xentany.antirelog.Settings;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.AreaEffectCloud;
@@ -29,8 +30,6 @@ import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
-import me.xentany.antirelog.config.Messages;
-import me.xentany.antirelog.config.Settings;
 import me.xentany.antirelog.manager.PvPManager;
 import me.xentany.antirelog.util.Utils;
 import org.jetbrains.annotations.NotNull;
@@ -46,16 +45,12 @@ public class PvPListener implements Listener {
 
   private final Plugin plugin;
   private final PvPManager pvpManager;
-  private final Messages messages;
-  private final Settings settings;
   private final Map<Player, AtomicInteger> allowedTeleports = new HashMap<>();
 
 
-  public PvPListener(Plugin plugin, PvPManager pvpManager, Settings settings) {
+  public PvPListener(Plugin plugin, PvPManager pvpManager) {
     this.plugin = plugin;
     this.pvpManager = pvpManager;
-    this.settings = settings;
-    this.messages = settings.getMessages();
     plugin.getServer().getScheduler().runTaskTimer(plugin, () -> {
       allowedTeleports.values().forEach(ai -> ai.set(ai.get() + 1));
       allowedTeleports.values().removeIf(ai -> ai.get() >= 5);
@@ -74,7 +69,7 @@ public class PvPListener implements Listener {
 
   @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
   public void onInteractWithEntity(PlayerInteractEntityEvent event) {
-    if (settings.isCancelInteractWithEntities() && pvpManager.isPvPModeEnabled() && pvpManager.isInPvP(event.getPlayer())) {
+    if (Settings.IMP.CANCEL_INTERACT_WITH_ENTITIES && pvpManager.isPvPModeEnabled() && pvpManager.isInPvP(event.getPlayer())) {
       event.setCancelled(true);
     }
   }
@@ -115,7 +110,7 @@ public class PvPListener implements Listener {
   @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
   public void onTeleport(PlayerTeleportEvent ev) {
 
-    if (settings.isDisableTeleportsInPvp() && pvpManager.isInPvP(ev.getPlayer())) {
+    if (Settings.IMP.DISABLE_TELEPORTS_IN_PVP && pvpManager.isInPvP(ev.getPlayer())) {
       if (allowedTeleports.containsKey(ev.getPlayer())) { //allow all teleport in 4-5 ticks after chorus or ender pearl
         return;
       }
@@ -136,13 +131,13 @@ public class PvPListener implements Listener {
 
   @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
   public void onCommand(PlayerCommandPreprocessEvent e) {
-    if (settings.isDisableCommandsInPvp() && pvpManager.isInPvP(e.getPlayer())) {
+    if (Settings.IMP.DISABLE_COMMANDS_IN_PVP && pvpManager.isInPvP(e.getPlayer())) {
       String command = e.getMessage().split(" ")[0].replaceFirst("/", "");
       if (pvpManager.isCommandWhiteListed(command)) {
         return;
       }
       e.setCancelled(true);
-      String message = Utils.color(messages.getCommandsDisabled());
+      String message = Utils.color(Settings.IMP.MESSAGES.COMMANDS_DISABLED);
       if (!message.isEmpty()) {
         e.getPlayer().sendMessage(Utils.replaceTime(message, pvpManager.getTimeRemainingInPvP(e.getPlayer())));
       }
@@ -165,7 +160,7 @@ public class PvPListener implements Listener {
 
     pvpManager.stopPvPSilent(player);
 
-    if (settings.getKickMessages().isEmpty()) {
+    if (Settings.IMP.KICK_MESSAGES.isEmpty()) {
       kickedInPvp(player);
       return;
     }
@@ -173,7 +168,7 @@ public class PvPListener implements Listener {
       return;
     }
     String reason = ChatColor.stripColor(e.getReason().toLowerCase());
-    for (String killReason : settings.getKickMessages()) {
+    for (String killReason : Settings.IMP.KICK_MESSAGES) {
       if (reason.contains(killReason.toLowerCase())) {
         kickedInPvp(player);
         return;
@@ -182,11 +177,11 @@ public class PvPListener implements Listener {
   }
 
   private void kickedInPvp(Player player) {
-    if (settings.isKillOnKick()) {
+    if (Settings.IMP.KILL_ON_KICK) {
       player.setHealth(0);
       sendLeavedInPvpMessage(player);
     }
-    if (settings.isRunCommandsOnKick()) {
+    if (Settings.IMP.RUN_COMMANDS_ON_KICK) {
       runCommands(player);
     }
   }
@@ -194,12 +189,12 @@ public class PvPListener implements Listener {
   @EventHandler(priority = EventPriority.HIGHEST)
   public void onQuit(PlayerQuitEvent e) {
     allowedTeleports.remove(e.getPlayer());
-    if (settings.isHideLeaveMessage()) {
+    if (Settings.IMP.HIDE_LEAVE_MESSAGE) {
       e.setQuitMessage(null);
     }
     if (pvpManager.isInPvP(e.getPlayer())) {
       pvpManager.stopPvPSilent(e.getPlayer());
-      if (settings.isKillOnLeave()) {
+      if (Settings.IMP.KILL_ON_LEAVE) {
         sendLeavedInPvpMessage(e.getPlayer());
         e.getPlayer().setHealth(0);
       } else {
@@ -214,7 +209,7 @@ public class PvPListener implements Listener {
 
   @EventHandler(priority = EventPriority.LOWEST)
   public void onDeath(PlayerDeathEvent e) {
-    if (settings.isHideDeathMessage()) {
+    if (Settings.IMP.HIDE_DEATH_MESSAGE) {
       e.setDeathMessage(null);
     }
 
@@ -225,13 +220,13 @@ public class PvPListener implements Listener {
 
   @EventHandler(priority = EventPriority.MONITOR)
   public void onJoin(PlayerJoinEvent e) {
-    if (settings.isHideJoinMessage()) {
+    if (Settings.IMP.HIDE_JOIN_MESSAGE) {
       e.setJoinMessage(null);
     }
   }
 
   private void sendLeavedInPvpMessage(Player p) {
-    String message = Utils.color(messages.getPvpLeaved()).replace("%player%", p.getName());
+    String message = Utils.color(Settings.IMP.MESSAGES.PVP_LEAVED).replace("%player%", p.getName());
     if (!message.isEmpty()) {
       for (Player pl : Bukkit.getOnlinePlayers()) {
         pl.sendMessage(message);
@@ -240,8 +235,8 @@ public class PvPListener implements Listener {
   }
 
   private void runCommands(Player leaved) {
-    if (!settings.getCommandsOnLeave().isEmpty()) {
-      settings.getCommandsOnLeave().forEach(command -> Bukkit.dispatchCommand(Bukkit.getConsoleSender(),
+    if (!Settings.IMP.COMMANDS_ON_LEAVE.isEmpty()) {
+      Settings.IMP.COMMANDS_ON_LEAVE.forEach(command -> Bukkit.dispatchCommand(Bukkit.getConsoleSender(),
           Utils.color(command).replace("%player%", leaved.getName())));
     }
   }

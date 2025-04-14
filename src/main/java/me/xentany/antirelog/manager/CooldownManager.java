@@ -3,29 +3,26 @@ package me.xentany.antirelog.manager;
 import com.comphenix.protocol.events.PacketContainer;
 import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.Table;
+import me.xentany.antirelog.Settings;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import me.xentany.antirelog.AntiRelogPlugin;
-import me.xentany.antirelog.config.Settings;
 import me.xentany.antirelog.util.ProtocolLibUtils;
 
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
-import java.util.function.Function;
 
 public class CooldownManager {
 
   private final AntiRelogPlugin plugin;
-  private final Settings settings;
   private final ScheduledExecutorService scheduledExecutorService;
   private final Table<Player, CooldownType, Long> cooldowns = HashBasedTable.create();
   private final Table<Player, CooldownType, ScheduledFuture> futures = HashBasedTable.create();
 
-  public CooldownManager(AntiRelogPlugin plugin, Settings settings) {
+  public CooldownManager(AntiRelogPlugin plugin) {
     this.plugin = plugin;
-    this.settings = settings;
     if (plugin.isProtocolLibEnabled()) {
       scheduledExecutorService = Executors.newSingleThreadScheduledExecutor();
     } else {
@@ -69,8 +66,8 @@ public class CooldownManager {
   }
 
   public void enteredToPvp(Player player) {
-    for (CooldownType cooldownType : CooldownType.values) {
-      int cooldown = cooldownType.getCooldown(settings);
+    for (CooldownType cooldownType : CooldownType.values()) {
+      int cooldown = cooldownType.getCooldown();
       if (cooldown == 0) {
         continue;
       }
@@ -84,8 +81,8 @@ public class CooldownManager {
   }
 
   public void removedFromPvp(Player player) {
-    for (CooldownType cooldownType : CooldownType.values) {
-      int cooldown = cooldownType.getCooldown(settings);
+    for (CooldownType cooldownType : CooldownType.values()) {
+      int cooldown = cooldownType.getCooldown();
       if (cooldown > 0 && hasCooldown(player, cooldownType, cooldown * 1000)) {
         removeItemCooldown(player, cooldownType);
       }
@@ -120,30 +117,24 @@ public class CooldownManager {
     cooldowns.clear();
   }
 
-  public Settings getSettings() {
-    return settings;
-  }
-
   public enum CooldownType {
-    GOLDEN_APPLE(Material.GOLDEN_APPLE, Settings::getGoldenAppleCooldown),
-    ENC_GOLDEN_APPLE(Material.ENCHANTED_GOLDEN_APPLE, Settings::getEnchantedGoldenAppleCooldown),
-    ENDER_PEARL(Material.ENDER_PEARL, Settings::getEnderPearlCooldown),
-    CHORUS(Material.CHORUS_FRUIT, Settings::getСhorusCooldown),
-    TOTEM(Material.TOTEM_OF_UNDYING, Settings::getTotemCooldown),
-    FIREWORK(Material.FIREWORK_ROCKET, Settings::getFireworkCooldown);
+    GOLDEN_APPLE(Material.GOLDEN_APPLE, Settings.IMP.GOLDEN_APPLE_COOLDOWN),
+    ENC_GOLDEN_APPLE(Material.ENCHANTED_GOLDEN_APPLE, Settings.IMP.ENCHANTED_GOLDEN_APPLE_COOLDOWN),
+    ENDER_PEARL(Material.ENDER_PEARL, Settings.IMP.ENDER_PEARL_COOLDOWN),
+    CHORUS(Material.CHORUS_FRUIT, Settings.IMP.CHORUS_COOLDOWN),
+    TOTEM(Material.TOTEM_OF_UNDYING, Settings.IMP.TOTEM_COOLDOWN),
+    FIREWORK(Material.FIREWORK_ROCKET, Settings.IMP.FIREWORK_COOLDOWN);
 
-    public static CooldownType[] values = values();
+    final Material material;
+    final Integer cooldown;
 
-    Material material;
-    Function<Settings, Integer> cooldown;
-
-    CooldownType(Material material, Function<Settings, Integer> cooldown) {
+    CooldownType(Material material, Integer cooldown) {
       this.material = material;
       this.cooldown = cooldown;
     }
 
-    public int getCooldown(Settings settings) {
-      return cooldown.apply(settings);
+    public int getCooldown() {
+      return cooldown;
     }
 
     public Material getMaterial() {

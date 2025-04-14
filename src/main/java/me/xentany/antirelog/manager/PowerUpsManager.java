@@ -6,24 +6,21 @@ import com.earth2me.essentials.Essentials;
 import com.earth2me.essentials.User;
 import de.myzelyam.api.vanish.VanishAPI;
 import me.libraryaddict.disguise.DisguiseAPI;
+import me.xentany.antirelog.Settings;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginManager;
 import org.kitteh.vanish.VanishPlugin;
-import me.xentany.antirelog.config.Settings;
 import me.xentany.antirelog.util.Utils;
 
 public class PowerUpsManager {
-
-  private final Settings settings;
 
   private boolean vanishAPI, libsDisguises, cmi;
   private VanishPlugin vanishNoPacket;
   private Essentials essentials;
 
-  public PowerUpsManager(Settings settings) {
-    this.settings = settings;
+  public PowerUpsManager() {
     detectPlugins();
   }
 
@@ -73,10 +70,10 @@ public class PowerUpsManager {
 
 
   public void disablePowerUpsWithRunCommands(Player player) {
-    if (disablePowerUps(player) && !settings.getCommandsOnPowerupsDisable().isEmpty()) {
-      settings.getCommandsOnPowerupsDisable().forEach(command -> Bukkit.dispatchCommand(Bukkit.getConsoleSender(),
+    if (disablePowerUps(player) && !Settings.IMP.COMMANDS_ON_POWERUPS_DISABLE.isEmpty()) {
+      Settings.IMP.COMMANDS_ON_POWERUPS_DISABLE.forEach(command -> Bukkit.dispatchCommand(Bukkit.getConsoleSender(),
           Utils.color(command.replace("%player%", player.getName()))));
-      String message = settings.getMessages().getPvpStartedWithPowerups();
+      String message = Settings.IMP.MESSAGES.PVP_STARTED_WITH_POWERUPS;
       if (!message.isEmpty()) {
         player.sendMessage(Utils.color(message));
       }

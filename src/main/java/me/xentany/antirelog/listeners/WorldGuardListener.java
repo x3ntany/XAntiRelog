@@ -1,26 +1,24 @@
 package me.xentany.antirelog.listeners;
 
+import me.xentany.antirelog.Settings;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event.Result;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.codemc.worldguardwrapper.event.WrappedDisallowedPVPEvent;
-import me.xentany.antirelog.config.Settings;
 import me.xentany.antirelog.manager.PvPManager;
 
 public class WorldGuardListener implements Listener {
 
-  private final Settings settings;
   private final PvPManager pvpManager;
 
-  public WorldGuardListener(Settings settings, PvPManager pvpManager) {
-    this.settings = settings;
+  public WorldGuardListener(PvPManager pvpManager) {
     this.pvpManager = pvpManager;
   }
 
   @EventHandler
   public void onPvP(WrappedDisallowedPVPEvent event) {
-    if (!pvpManager.isPvPModeEnabled() || !settings.isIgnoreWorldGuard()) {
+    if (!pvpManager.isPvPModeEnabled() || !Settings.IMP.IGNORE_WORLDGUARD) {
       return;
     }
 
@@ -33,7 +31,7 @@ public class WorldGuardListener implements Listener {
     if (attackerInPvp && defenderInPvp) {
       event.setCancelled(true);
       event.setResult(Result.DENY); //Deny means cancelled means pvp allowed
-    } else if (settings.isJoinPvPInWorldGuard() && defenderInPvp) {
+    } else if (Settings.IMP.JOIN_PVP_IN_WORLDGUARD && defenderInPvp) {
       event.setCancelled(true);
       event.setResult(Result.DENY); //Deny means cancelled means pvp allowed
     }

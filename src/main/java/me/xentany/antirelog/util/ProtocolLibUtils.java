@@ -13,7 +13,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
-import me.xentany.antirelog.config.Settings;
 import me.xentany.antirelog.manager.CooldownManager;
 import me.xentany.antirelog.manager.CooldownManager.CooldownType;
 import me.xentany.antirelog.manager.PvPManager;
@@ -60,7 +59,6 @@ public class ProtocolLibUtils {
 
   public static void createListener(CooldownManager cooldownManager, PvPManager pvPManager, Plugin plugin) {
 
-    Settings settings = cooldownManager.getSettings();
     ProtocolLibrary.getProtocolManager().addPacketListener(new PacketAdapter(plugin, ListenerPriority.LOWEST, PacketType.Play.Server.SET_COOLDOWN) {
       List<CooldownType> types = Arrays.asList(CooldownType.CHORUS, CooldownType.ENDER_PEARL);
 
@@ -72,9 +70,9 @@ public class ProtocolLibUtils {
 
         for (CooldownType cooldownType : types) {
           if (material == cooldownType.getMaterial()) {
-            boolean hasCooldown = cooldownManager.hasCooldown(event.getPlayer(), cooldownType, cooldownType.getCooldown(settings) * 1000);
+            boolean hasCooldown = cooldownManager.hasCooldown(event.getPlayer(), cooldownType, cooldownType.getCooldown() * 1000L);
             if (hasCooldown) {
-              long remaning = cooldownManager.getRemaining(event.getPlayer(), cooldownType, cooldownType.getCooldown(settings) * 1000);
+              long remaning = cooldownManager.getRemaining(event.getPlayer(), cooldownType, cooldownType.getCooldown() * 1000L);
               if (Math.abs(remaning - duration) > 100) {
                 if (!pvPManager.isPvPModeEnabled() || pvPManager.isInPvP(event.getPlayer())) {
                   if (duration == 0) {

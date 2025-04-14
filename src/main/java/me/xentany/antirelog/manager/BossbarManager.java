@@ -1,11 +1,11 @@
 package me.xentany.antirelog.manager;
 
+import me.xentany.antirelog.Settings;
 import org.bukkit.Bukkit;
 import org.bukkit.boss.BarColor;
 import org.bukkit.boss.BarStyle;
 import org.bukkit.boss.BossBar;
 import org.bukkit.entity.Player;
-import me.xentany.antirelog.config.Settings;
 import me.xentany.antirelog.util.Utils;
 
 import java.util.HashMap;
@@ -14,20 +14,15 @@ import java.util.Map;
 public class BossbarManager {
 
   private final Map<Integer, BossBar> bossBars = new HashMap<>();
-  private final Settings settings;
-
-  public BossbarManager(Settings settings) {
-    this.settings = settings;
-  }
 
   public void createBossBars() {
     bossBars.clear();
-    if (settings.getPvpTime() > 0) {
-      String title = Utils.color(settings.getMessages().getInPvpBossbar());
+    if (Settings.IMP.PVP_TIME > 0) {
+      String title = Utils.color(Settings.IMP.MESSAGES.IN_PVP_BOSSBAR);
       if (!title.isEmpty()) {
-        double add = 1d / (double) settings.getPvpTime();
+        double add = 1d / (double) Settings.IMP.PVP_TIME;
         double progress = add;
-        for (int i = 1; i <= settings.getPvpTime(); i++) {
+        for (int i = 1; i <= Settings.IMP.PVP_TIME; i++) {
           String actualTitle = Utils.replaceTime(title, i);
           BossBar bar = Bukkit.createBossBar(actualTitle, BarColor.RED, BarStyle.SOLID);
           bar.setProgress(progress);
