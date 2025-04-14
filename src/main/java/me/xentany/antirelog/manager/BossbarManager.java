@@ -1,13 +1,13 @@
-package ru.leymooo.antirelog.manager;
+package me.xentany.antirelog.manager;
 
 import org.bukkit.Bukkit;
 import org.bukkit.boss.BarColor;
 import org.bukkit.boss.BarStyle;
 import org.bukkit.boss.BossBar;
 import org.bukkit.entity.Player;
-import ru.leymooo.antirelog.config.Settings;
-import ru.leymooo.antirelog.util.Utils;
-import ru.leymooo.antirelog.util.VersionUtils;
+import me.xentany.antirelog.config.Settings;
+import me.xentany.antirelog.util.Utils;
+import me.xentany.antirelog.util.VersionUtils;
 
 import java.util.HashMap;
 import java.util.Map;

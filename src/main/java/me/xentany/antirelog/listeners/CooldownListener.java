@@ -1,4 +1,4 @@
-package ru.leymooo.antirelog.listeners;
+package me.xentany.antirelog.listeners;
 
 import org.bukkit.Material;
 import org.bukkit.entity.EntityType;
@@ -14,14 +14,14 @@ import org.bukkit.event.player.PlayerItemConsumeEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
-import ru.leymooo.antirelog.config.Settings;
-import ru.leymooo.antirelog.event.PvpStartedEvent;
-import ru.leymooo.antirelog.event.PvpStoppedEvent;
-import ru.leymooo.antirelog.manager.CooldownManager;
-import ru.leymooo.antirelog.manager.CooldownManager.CooldownType;
-import ru.leymooo.antirelog.manager.PvPManager;
-import ru.leymooo.antirelog.util.Utils;
-import ru.leymooo.antirelog.util.VersionUtils;
+import me.xentany.antirelog.config.Settings;
+import me.xentany.antirelog.event.PvpStartedEvent;
+import me.xentany.antirelog.event.PvpStoppedEvent;
+import me.xentany.antirelog.manager.CooldownManager;
+import me.xentany.antirelog.manager.CooldownManager.CooldownType;
+import me.xentany.antirelog.manager.PvPManager;
+import me.xentany.antirelog.util.Utils;
+import me.xentany.antirelog.util.VersionUtils;
 
 import java.util.concurrent.TimeUnit;
 

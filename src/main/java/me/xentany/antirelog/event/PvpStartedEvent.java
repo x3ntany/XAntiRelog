@@ -1,11 +1,11 @@
-package ru.leymooo.antirelog.event;
+package me.xentany.antirelog.event;
 
 import org.bukkit.entity.Player;
-import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
+import me.xentany.antirelog.event.PvpPreStartEvent.PvPStatus;
 
-public class PvpPreStartEvent extends Event implements Cancellable {
+public class PvpStartedEvent extends Event {
 
     private static final HandlerList handlers = new HandlerList();
 
@@ -13,9 +13,8 @@ public class PvpPreStartEvent extends Event implements Cancellable {
     private final Player attacker;
     private final int pvpTime;
     private final PvPStatus pvpStatus;
-    private boolean cancelled;
 
-    public PvpPreStartEvent(Player defender, Player attacker, int pvpTime, PvPStatus pvpStatus) {
+    public PvpStartedEvent(Player defender, Player attacker, int pvpTime, PvPStatus pvpStatus) {
         this.defender = defender;
         this.attacker = attacker;
         this.pvpTime = pvpTime;
@@ -28,16 +27,6 @@ public class PvpPreStartEvent extends Event implements Cancellable {
 
     public Player getAttacker() {
         return attacker;
-    }
-
-    @Override
-    public boolean isCancelled() {
-        return cancelled;
-    }
-
-    @Override
-    public void setCancelled(boolean cancel) {
-        this.cancelled = cancel;
     }
 
     public int getPvpTime() {
@@ -55,11 +44,5 @@ public class PvpPreStartEvent extends Event implements Cancellable {
 
     public static HandlerList getHandlerList() {
         return handlers;
-    }
-
-    public enum PvPStatus {
-        ATTACKER_IN_PVP,
-        DEFENDER_IN_PVP,
-        ALL_NOT_IN_PVP;
     }
 }

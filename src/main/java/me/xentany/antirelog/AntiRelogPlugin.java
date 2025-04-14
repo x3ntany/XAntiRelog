@@ -1,4 +1,4 @@
-package ru.leymooo.antirelog;
+package me.xentany.antirelog;
 
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
@@ -8,16 +8,16 @@ import org.codemc.worldguardwrapper.WorldGuardWrapper;
 import ru.leymooo.annotatedyaml.Configuration;
 import ru.leymooo.annotatedyaml.ConfigurationProvider;
 import ru.leymooo.annotatedyaml.provider.BukkitConfigurationProvider;
-import ru.leymooo.antirelog.config.Settings;
-import ru.leymooo.antirelog.listeners.CooldownListener;
-import ru.leymooo.antirelog.listeners.EssentialsTeleportListener;
-import ru.leymooo.antirelog.listeners.PvPListener;
-import ru.leymooo.antirelog.listeners.WorldGuardListener;
-import ru.leymooo.antirelog.manager.BossbarManager;
-import ru.leymooo.antirelog.manager.CooldownManager;
-import ru.leymooo.antirelog.manager.PowerUpsManager;
-import ru.leymooo.antirelog.manager.PvPManager;
-import ru.leymooo.antirelog.util.ProtocolLibUtils;
+import me.xentany.antirelog.config.Settings;
+import me.xentany.antirelog.listeners.CooldownListener;
+import me.xentany.antirelog.listeners.EssentialsTeleportListener;
+import me.xentany.antirelog.listeners.PvPListener;
+import me.xentany.antirelog.listeners.WorldGuardListener;
+import me.xentany.antirelog.manager.BossbarManager;
+import me.xentany.antirelog.manager.CooldownManager;
+import me.xentany.antirelog.manager.PowerUpsManager;
+import me.xentany.antirelog.manager.PvPManager;
+import me.xentany.antirelog.util.ProtocolLibUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -30,9 +30,9 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.stream.Stream;
-import ru.leymooo.antirelog.util.VersionUtils;
+import me.xentany.antirelog.util.VersionUtils;
 
-public class Antirelog extends JavaPlugin {
+public class AntiRelogPlugin extends JavaPlugin {
     private Settings settings;
     private PvPManager pvpManager;
     private CooldownManager cooldownManager;

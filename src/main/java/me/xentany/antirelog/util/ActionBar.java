@@ -1,4 +1,4 @@
-package ru.leymooo.antirelog.util;
+package me.xentany.antirelog.util;
 
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.TextComponent;

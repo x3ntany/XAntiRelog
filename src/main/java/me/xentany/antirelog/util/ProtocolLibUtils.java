@@ -1,4 +1,4 @@
-package ru.leymooo.antirelog.util;
+package me.xentany.antirelog.util;
 
 import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.ProtocolLibrary;
@@ -13,10 +13,10 @@ import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
-import ru.leymooo.antirelog.config.Settings;
-import ru.leymooo.antirelog.manager.CooldownManager;
-import ru.leymooo.antirelog.manager.CooldownManager.CooldownType;
-import ru.leymooo.antirelog.manager.PvPManager;
+import me.xentany.antirelog.config.Settings;
+import me.xentany.antirelog.manager.CooldownManager;
+import me.xentany.antirelog.manager.CooldownManager.CooldownType;
+import me.xentany.antirelog.manager.PvPManager;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;

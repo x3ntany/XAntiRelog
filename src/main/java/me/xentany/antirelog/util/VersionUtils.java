@@ -1,8 +1,8 @@
-package ru.leymooo.antirelog.util;
+package me.xentany.antirelog.util;
 
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
-import ru.leymooo.antirelog.Antirelog;
+import me.xentany.antirelog.AntiRelogPlugin;
 
 import java.util.logging.Level;
 import java.util.regex.MatchResult;
@@ -49,9 +49,9 @@ public class VersionUtils {
                 minorVersion = Integer.parseInt(matchResult.group(3), 10);
                 minorVersionResolved = true;
             }
-            JavaPlugin.getPlugin(Antirelog.class).getLogger().info("Detected version: 1."  + majorVersion + "." + minorVersion);
+            JavaPlugin.getPlugin(AntiRelogPlugin.class).getLogger().info("Detected version: 1."  + majorVersion + "." + minorVersion);
         } catch (Exception e) {
-            JavaPlugin.getPlugin(Antirelog.class).getLogger().log(Level.WARNING, "Failed to detect MC version, trying another method...");
+            JavaPlugin.getPlugin(AntiRelogPlugin.class).getLogger().log(Level.WARNING, "Failed to detect MC version, trying another method...");
             try {
                 String[] split = Bukkit.getBukkitVersion().split("-")[0].split("\\.");
                 majorVersion = Integer.parseInt(split[1]);
@@ -59,21 +59,21 @@ public class VersionUtils {
                     minorVersion = Integer.parseInt(split[2]);
                     minorVersionResolved = true;
                 }
-                JavaPlugin.getPlugin(Antirelog.class).getLogger().info("Detected version: 1."  + majorVersion + "." + minorVersion);
+                JavaPlugin.getPlugin(AntiRelogPlugin.class).getLogger().info("Detected version: 1."  + majorVersion + "." + minorVersion);
             } catch (Exception e2) {
-                JavaPlugin.getPlugin(Antirelog.class).getLogger().log(Level.WARNING, "Failed to detect MC version, trying another method... ");
+                JavaPlugin.getPlugin(AntiRelogPlugin.class).getLogger().log(Level.WARNING, "Failed to detect MC version, trying another method... ");
                 try {
                     String[] split = Bukkit.getServer().getClass().getPackage().getName().split("\\.")[3].split("_");
                     majorVersion = Integer.parseInt(split[1]);
-                    JavaPlugin.getPlugin(Antirelog.class).getLogger().info("Detected version: 1."  + majorVersion + "." + minorVersion);
+                    JavaPlugin.getPlugin(AntiRelogPlugin.class).getLogger().info("Detected version: 1."  + majorVersion + "." + minorVersion);
                 } catch (Exception e3) {
-                    JavaPlugin.getPlugin(Antirelog.class).getLogger().log(Level.WARNING, "Failed to detect MC version, trying another method... Fallback to 1" +
+                    JavaPlugin.getPlugin(AntiRelogPlugin.class).getLogger().log(Level.WARNING, "Failed to detect MC version, trying another method... Fallback to 1" +
                             ".8.8.", e);
                     e2.printStackTrace();
                     e3.printStackTrace();
                     majorVersion = 8;
                     minorVersion = 8;
-                    JavaPlugin.getPlugin(Antirelog.class).getLogger().info("Detected version: 1."  + majorVersion + "." + minorVersion);
+                    JavaPlugin.getPlugin(AntiRelogPlugin.class).getLogger().info("Detected version: 1."  + majorVersion + "." + minorVersion);
                 }
             }
         }

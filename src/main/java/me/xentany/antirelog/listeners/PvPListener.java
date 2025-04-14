@@ -1,4 +1,4 @@
-package ru.leymooo.antirelog.listeners;
+package me.xentany.antirelog.listeners;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -14,11 +14,11 @@ import org.bukkit.metadata.MetadataValue;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
-import ru.leymooo.antirelog.config.Messages;
-import ru.leymooo.antirelog.config.Settings;
-import ru.leymooo.antirelog.manager.PvPManager;
-import ru.leymooo.antirelog.util.Utils;
-import ru.leymooo.antirelog.util.VersionUtils;
+import me.xentany.antirelog.config.Messages;
+import me.xentany.antirelog.config.Settings;
+import me.xentany.antirelog.manager.PvPManager;
+import me.xentany.antirelog.util.Utils;
+import me.xentany.antirelog.util.VersionUtils;
 
 import java.util.HashMap;
 import java.util.Map;

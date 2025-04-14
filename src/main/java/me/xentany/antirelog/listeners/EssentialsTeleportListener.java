@@ -1,10 +1,10 @@
-package ru.leymooo.antirelog.listeners;
+package me.xentany.antirelog.listeners;
 
 import net.ess3.api.events.teleport.PreTeleportEvent;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import ru.leymooo.antirelog.config.Settings;
-import ru.leymooo.antirelog.manager.PvPManager;
+import me.xentany.antirelog.config.Settings;
+import me.xentany.antirelog.manager.PvPManager;
 
 public class EssentialsTeleportListener implements Listener {
 

@@ -1,4 +1,4 @@
-package ru.leymooo.antirelog.util;
+package me.xentany.antirelog.util;
 
 import org.bukkit.ChatColor;
 

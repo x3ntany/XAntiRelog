@@ -1,4 +1,4 @@
-package ru.leymooo.antirelog.config;
+package me.xentany.antirelog.config;
 
 import ru.leymooo.annotatedyaml.Annotations.*;
 import ru.leymooo.annotatedyaml.ConfigurationSection;

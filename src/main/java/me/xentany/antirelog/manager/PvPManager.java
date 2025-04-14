@@ -1,4 +1,4 @@
-package ru.leymooo.antirelog.manager;
+package me.xentany.antirelog.manager;
 
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
@@ -6,34 +6,31 @@ import org.bukkit.command.Command;
 import org.bukkit.entity.Player;
 import org.codemc.worldguardwrapper.WorldGuardWrapper;
 import org.codemc.worldguardwrapper.region.IWrappedRegion;
-import ru.leymooo.antirelog.Antirelog;
-import ru.leymooo.antirelog.config.Settings;
-import ru.leymooo.antirelog.event.PvpPreStartEvent;
-import ru.leymooo.antirelog.event.PvpPreStartEvent.PvPStatus;
-import ru.leymooo.antirelog.event.PvpStartedEvent;
-import ru.leymooo.antirelog.event.PvpStoppedEvent;
-import ru.leymooo.antirelog.event.PvpTimeUpdateEvent;
-import ru.leymooo.antirelog.util.ActionBar;
-import ru.leymooo.antirelog.util.CommandMapUtils;
-import ru.leymooo.antirelog.util.Utils;
-import ru.leymooo.antirelog.util.VersionUtils;
+import me.xentany.antirelog.AntiRelogPlugin;
+import me.xentany.antirelog.config.Settings;
+import me.xentany.antirelog.event.PvpPreStartEvent;
+import me.xentany.antirelog.event.PvpPreStartEvent.PvPStatus;
+import me.xentany.antirelog.event.PvpStartedEvent;
+import me.xentany.antirelog.event.PvpStoppedEvent;
+import me.xentany.antirelog.event.PvpTimeUpdateEvent;
+import me.xentany.antirelog.util.ActionBar;
+import me.xentany.antirelog.util.CommandMapUtils;
+import me.xentany.antirelog.util.Utils;
+import me.xentany.antirelog.util.VersionUtils;
 
 import java.util.*;
-import java.util.concurrent.Callable;
-import java.util.function.Consumer;
-import java.util.function.Function;
 
 public class PvPManager {
 
     private final Settings settings;
-    private final Antirelog plugin;
+    private final AntiRelogPlugin plugin;
     private final Map<Player, Integer> pvpMap = new HashMap<>();
     private final Map<Player, Integer> silentPvpMap = new HashMap<>();
     private final PowerUpsManager powerUpsManager;
     private final BossbarManager bossbarManager;
     private final Set<String> whiteListedCommands = new HashSet<>();
 
-    public PvPManager(Settings settings, Antirelog plugin) {
+    public PvPManager(Settings settings, AntiRelogPlugin plugin) {
         this.settings = settings;
         this.plugin = plugin;
         this.powerUpsManager = new PowerUpsManager(settings);

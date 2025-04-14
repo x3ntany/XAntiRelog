@@ -1,15 +1,14 @@
-package ru.leymooo.antirelog.manager;
+package me.xentany.antirelog.manager;
 
 import com.comphenix.protocol.events.PacketContainer;
 import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.Table;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
-import org.bukkit.plugin.Plugin;
-import ru.leymooo.antirelog.Antirelog;
-import ru.leymooo.antirelog.config.Settings;
-import ru.leymooo.antirelog.util.ProtocolLibUtils;
-import ru.leymooo.antirelog.util.VersionUtils;
+import me.xentany.antirelog.AntiRelogPlugin;
+import me.xentany.antirelog.config.Settings;
+import me.xentany.antirelog.util.ProtocolLibUtils;
+import me.xentany.antirelog.util.VersionUtils;
 
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -19,13 +18,13 @@ import java.util.function.Function;
 
 public class CooldownManager {
 
-    private final Antirelog plugin;
+    private final AntiRelogPlugin plugin;
     private final Settings settings;
     private final ScheduledExecutorService scheduledExecutorService;
     private final Table<Player, CooldownType, Long> cooldowns = HashBasedTable.create();
     private final Table<Player, CooldownType, ScheduledFuture> futures = HashBasedTable.create();
 
-    public CooldownManager(Antirelog plugin, Settings settings) {
+    public CooldownManager(AntiRelogPlugin plugin, Settings settings) {
         this.plugin = plugin;
         this.settings = settings;
         if (plugin.isProtocolLibEnabled()) {

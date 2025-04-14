@@ -1,4 +1,4 @@
-package ru.leymooo.antirelog.manager;
+package me.xentany.antirelog.manager;
 
 import com.Zrips.CMI.CMI;
 import com.Zrips.CMI.Containers.CMIUser;
@@ -11,8 +11,8 @@ import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginManager;
 import org.kitteh.vanish.VanishPlugin;
-import ru.leymooo.antirelog.config.Settings;
-import ru.leymooo.antirelog.util.Utils;
+import me.xentany.antirelog.config.Settings;
+import me.xentany.antirelog.util.Utils;
 
 public class PowerUpsManager {
 

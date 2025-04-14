@@ -1,4 +1,4 @@
-package ru.leymooo.antirelog.event;
+package me.xentany.antirelog.event;
 
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
