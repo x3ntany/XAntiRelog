@@ -21,7 +21,6 @@ import me.xentany.antirelog.manager.CooldownManager;
 import me.xentany.antirelog.manager.CooldownManager.CooldownType;
 import me.xentany.antirelog.manager.PvPManager;
 import me.xentany.antirelog.util.Utils;
-import me.xentany.antirelog.util.VersionUtils;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.concurrent.TimeUnit;
@@ -167,7 +166,7 @@ public class CooldownListener implements Listener {
   }
 
   private boolean isChorus(ItemStack itemStack) {
-    return VersionUtils.isVersion(9) && itemStack.getType() == Material.CHORUS_FRUIT;
+    return itemStack.getType() == Material.CHORUS_FRUIT;
   }
 
   private boolean isGoldenOrEnchantedApple(ItemStack itemStack) {
@@ -179,12 +178,11 @@ public class CooldownListener implements Listener {
   }
 
   private boolean isEnchantedGoldenApple(ItemStack itemStack) {
-    return (VersionUtils.isVersion(13) && itemStack.getType() == Material.ENCHANTED_GOLDEN_APPLE)
-        || (isGoldenApple(itemStack) && itemStack.getDurability() >= 1);
+    return itemStack.getType() == Material.ENCHANTED_GOLDEN_APPLE;
   }
 
   private boolean isFirework(ItemStack itemStack) {
-    return VersionUtils.isVersion(13) ? itemStack.getType() == Material.FIREWORK_ROCKET : itemStack.getType() == Material.getMaterial("FIREWORK");
+    return itemStack.getType() == Material.FIREWORK_ROCKET;
   }
 
   private void cancelEventIfInPvp(Cancellable event, CooldownType type, Player player) {
