@@ -186,8 +186,7 @@
       <groupId>CMI-API</groupId>
       <artifactId>CMI-API</artifactId>
       <version>9.7.4.1</version>
-      <systemPath>${project.basedir}/libs/CMIAPI-9.7.4.1.jar</systemPath>
-      <scope>system</scope>
+      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>com.comphenix.protocol</groupId>
