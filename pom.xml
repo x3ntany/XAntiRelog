@@ -44,6 +44,10 @@
                   <pattern>ru.leymooo.annotatedyaml</pattern>
                   <shadedPattern>me.xentany.antirelog.libs.annotatedyaml</shadedPattern>
                 </relocation>
+                <relocation>
+                  <pattern>net.elytrium.commons.config</pattern>
+                  <shadedPattern>me.xentany.antirelog.libs.config</shadedPattern>
+                </relocation>
               </relocations>
               <filters>
                 <filter>
@@ -111,6 +115,10 @@
       <url>https://repo.dmulloy2.net/nexus/repository/public/</url>
     </repository>
     <repository>
+      <id>elytrium-repository</id>
+      <url>https://maven.elytrium.net/repo/</url>
+    </repository>
+    <repository>
       <id>jitpack.io</id>
       <url>https://jitpack.io</url>
     </repository>
@@ -145,12 +153,6 @@
       <artifactId>junit</artifactId>
       <version>4.13.1</version>
       <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>com.github.x3ntany.AnnotatedYAMLConfiguration</groupId>
-      <artifactId>AnnotatedYAMLConfiguration-bukkit</artifactId>
-      <version>1.2</version>
-      <scope>compile</scope>
     </dependency>
     <dependency>
       <groupId>net.essentialsx</groupId>
@@ -192,6 +194,18 @@
       <groupId>com.comphenix.protocol</groupId>
       <artifactId>ProtocolLib</artifactId>
       <version>5.3.0</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>net.elytrium.commons</groupId>
+      <artifactId>config</artifactId>
+      <version>1.2.6</version>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.github.x3ntany</groupId>
+      <artifactId>MiniMessageProvider</artifactId>
+      <version>1.0.0</version>
       <scope>provided</scope>
     </dependency>
   </dependencies>
