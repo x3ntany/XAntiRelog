@@ -11,72 +11,72 @@ import java.util.regex.Pattern;
 
 public class VersionUtils {
 
-    private static int majorVersion;
-    private static int minorVersion = 0;
-    private static boolean minorVersionResolved = false;
+  private static int majorVersion;
+  private static int minorVersion = 0;
+  private static boolean minorVersionResolved = false;
 
-    static {
-        detectServerVersion();
-    }
+  static {
+    detectServerVersion();
+  }
 
-    public static int getMajorVersion() {
-        return majorVersion;
-    }
+  public static int getMajorVersion() {
+    return majorVersion;
+  }
 
-    public static int getMinorVersion() {
-        return minorVersion;
-    }
+  public static int getMinorVersion() {
+    return minorVersion;
+  }
 
 
-    public static boolean isVersion(int major) {
-        return majorVersion >= major;
-    }
+  public static boolean isVersion(int major) {
+    return majorVersion >= major;
+  }
 
-    public static boolean isVersion(int major, int minor) {
-        return minorVersionResolved ? majorVersion >= major && minorVersion >= minor : majorVersion >= major;
-    }
+  public static boolean isVersion(int major, int minor) {
+    return minorVersionResolved ? majorVersion >= major && minorVersion >= minor : majorVersion >= major;
+  }
 
-    private static void detectServerVersion() {
-        //на все случаи жизни
-        try {
-            Pattern versionPattern = Pattern.compile("\\(MC: (\\d)\\.(\\d+)\\.?(\\d+?)?\\)");
-            Matcher matcher = versionPattern.matcher(Bukkit.getVersion());
+  private static void detectServerVersion() {
+    //на все случаи жизни
+    try {
+      Pattern versionPattern = Pattern.compile("\\(MC: (\\d)\\.(\\d+)\\.?(\\d+?)?\\)");
+      Matcher matcher = versionPattern.matcher(Bukkit.getVersion());
 
-            matcher.find();
-            MatchResult matchResult = matcher.toMatchResult();
-            majorVersion = Integer.parseInt(matchResult.group(2), 10);
-            if (matchResult.groupCount() >= 3) {
-                minorVersion = Integer.parseInt(matchResult.group(3), 10);
-                minorVersionResolved = true;
-            }
-            JavaPlugin.getPlugin(AntiRelogPlugin.class).getLogger().info("Detected version: 1."  + majorVersion + "." + minorVersion);
-        } catch (Exception e) {
-            JavaPlugin.getPlugin(AntiRelogPlugin.class).getLogger().log(Level.WARNING, "Failed to detect MC version, trying another method...");
-            try {
-                String[] split = Bukkit.getBukkitVersion().split("-")[0].split("\\.");
-                majorVersion = Integer.parseInt(split[1]);
-                if (split.length == 3) {
-                    minorVersion = Integer.parseInt(split[2]);
-                    minorVersionResolved = true;
-                }
-                JavaPlugin.getPlugin(AntiRelogPlugin.class).getLogger().info("Detected version: 1."  + majorVersion + "." + minorVersion);
-            } catch (Exception e2) {
-                JavaPlugin.getPlugin(AntiRelogPlugin.class).getLogger().log(Level.WARNING, "Failed to detect MC version, trying another method... ");
-                try {
-                    String[] split = Bukkit.getServer().getClass().getPackage().getName().split("\\.")[3].split("_");
-                    majorVersion = Integer.parseInt(split[1]);
-                    JavaPlugin.getPlugin(AntiRelogPlugin.class).getLogger().info("Detected version: 1."  + majorVersion + "." + minorVersion);
-                } catch (Exception e3) {
-                    JavaPlugin.getPlugin(AntiRelogPlugin.class).getLogger().log(Level.WARNING, "Failed to detect MC version, trying another method... Fallback to 1" +
-                            ".8.8.", e);
-                    e2.printStackTrace();
-                    e3.printStackTrace();
-                    majorVersion = 8;
-                    minorVersion = 8;
-                    JavaPlugin.getPlugin(AntiRelogPlugin.class).getLogger().info("Detected version: 1."  + majorVersion + "." + minorVersion);
-                }
-            }
+      matcher.find();
+      MatchResult matchResult = matcher.toMatchResult();
+      majorVersion = Integer.parseInt(matchResult.group(2), 10);
+      if (matchResult.groupCount() >= 3) {
+        minorVersion = Integer.parseInt(matchResult.group(3), 10);
+        minorVersionResolved = true;
+      }
+      JavaPlugin.getPlugin(AntiRelogPlugin.class).getLogger().info("Detected version: 1." + majorVersion + "." + minorVersion);
+    } catch (Exception e) {
+      JavaPlugin.getPlugin(AntiRelogPlugin.class).getLogger().log(Level.WARNING, "Failed to detect MC version, trying another method...");
+      try {
+        String[] split = Bukkit.getBukkitVersion().split("-")[0].split("\\.");
+        majorVersion = Integer.parseInt(split[1]);
+        if (split.length == 3) {
+          minorVersion = Integer.parseInt(split[2]);
+          minorVersionResolved = true;
         }
+        JavaPlugin.getPlugin(AntiRelogPlugin.class).getLogger().info("Detected version: 1." + majorVersion + "." + minorVersion);
+      } catch (Exception e2) {
+        JavaPlugin.getPlugin(AntiRelogPlugin.class).getLogger().log(Level.WARNING, "Failed to detect MC version, trying another method... ");
+        try {
+          String[] split = Bukkit.getServer().getClass().getPackage().getName().split("\\.")[3].split("_");
+          majorVersion = Integer.parseInt(split[1]);
+          JavaPlugin.getPlugin(AntiRelogPlugin.class).getLogger().info("Detected version: 1." + majorVersion + "." + minorVersion);
+        } catch (Exception e3) {
+          JavaPlugin.getPlugin(AntiRelogPlugin.class).getLogger().log(Level.WARNING, "Failed to detect MC version, trying another method... Fallback to 1" +
+              ".8.8.", e);
+          e2.printStackTrace();
+          e3.printStackTrace();
+          majorVersion = 8;
+          minorVersion = 8;
+          JavaPlugin.getPlugin(AntiRelogPlugin.class).getLogger().info("Detected version: 1." + majorVersion + "." + minorVersion);
+        }
+      }
     }
+  }
 
 }

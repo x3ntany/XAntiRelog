@@ -7,42 +7,42 @@ import me.xentany.antirelog.event.PvpPreStartEvent.PvPStatus;
 
 public class PvpStartedEvent extends Event {
 
-    private static final HandlerList handlers = new HandlerList();
+  private static final HandlerList handlers = new HandlerList();
 
-    private final Player defender;
-    private final Player attacker;
-    private final int pvpTime;
-    private final PvPStatus pvpStatus;
+  private final Player defender;
+  private final Player attacker;
+  private final int pvpTime;
+  private final PvPStatus pvpStatus;
 
-    public PvpStartedEvent(Player defender, Player attacker, int pvpTime, PvPStatus pvpStatus) {
-        this.defender = defender;
-        this.attacker = attacker;
-        this.pvpTime = pvpTime;
-        this.pvpStatus = pvpStatus;
-    }
+  public PvpStartedEvent(Player defender, Player attacker, int pvpTime, PvPStatus pvpStatus) {
+    this.defender = defender;
+    this.attacker = attacker;
+    this.pvpTime = pvpTime;
+    this.pvpStatus = pvpStatus;
+  }
 
-    public Player getDefender() {
-        return defender;
-    }
+  public Player getDefender() {
+    return defender;
+  }
 
-    public Player getAttacker() {
-        return attacker;
-    }
+  public Player getAttacker() {
+    return attacker;
+  }
 
-    public int getPvpTime() {
-        return pvpTime;
-    }
+  public int getPvpTime() {
+    return pvpTime;
+  }
 
-    public PvPStatus getPvpStatus() {
-        return pvpStatus;
-    }
+  public PvPStatus getPvpStatus() {
+    return pvpStatus;
+  }
 
-    @Override
-    public HandlerList getHandlers() {
-        return handlers;
-    }
+  @Override
+  public HandlerList getHandlers() {
+    return handlers;
+  }
 
-    public static HandlerList getHandlerList() {
-        return handlers;
-    }
+  public static HandlerList getHandlerList() {
+    return handlers;
+  }
 }

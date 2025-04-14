@@ -6,54 +6,54 @@ import org.bukkit.event.HandlerList;
 
 
 public class PvpTimeUpdateEvent extends Event {
-    private static final HandlerList handlers = new HandlerList();
+  private static final HandlerList handlers = new HandlerList();
 
-    private final Player player;
-    private final int oldTime, newTime;
+  private final Player player;
+  private final int oldTime, newTime;
 
-    private Player damagedPlayer;
-    private Player damagedBy;
+  private Player damagedPlayer;
+  private Player damagedBy;
 
-    public PvpTimeUpdateEvent(Player player, int oldTime, int newTime) {
-        this.player = player;
-        this.oldTime = oldTime;
-        this.newTime = newTime;
-    }
+  public PvpTimeUpdateEvent(Player player, int oldTime, int newTime) {
+    this.player = player;
+    this.oldTime = oldTime;
+    this.newTime = newTime;
+  }
 
-    public Player getPlayer() {
-        return player;
-    }
+  public Player getPlayer() {
+    return player;
+  }
 
-    public int getOldTime() {
-        return oldTime;
-    }
+  public int getOldTime() {
+    return oldTime;
+  }
 
-    public int getNewTime() {
-        return newTime;
-    }
+  public int getNewTime() {
+    return newTime;
+  }
 
-    public Player getDamagedPlayer() {
-        return damagedPlayer;
-    }
+  public Player getDamagedPlayer() {
+    return damagedPlayer;
+  }
 
-    public void setDamagedPlayer(Player damagedPlayer) {
-        this.damagedPlayer = damagedPlayer;
-    }
+  public void setDamagedPlayer(Player damagedPlayer) {
+    this.damagedPlayer = damagedPlayer;
+  }
 
-    public Player getDamagedBy() {
-        return damagedBy;
-    }
+  public Player getDamagedBy() {
+    return damagedBy;
+  }
 
-    public void setDamagedBy(Player damagedBy) {
-        this.damagedBy = damagedBy;
-    }
+  public void setDamagedBy(Player damagedBy) {
+    this.damagedBy = damagedBy;
+  }
 
-    @Override
-    public HandlerList getHandlers() {
-        return handlers;
-    }
+  @Override
+  public HandlerList getHandlers() {
+    return handlers;
+  }
 
-    public static HandlerList getHandlerList() {
-        return handlers;
-    }
+  public static HandlerList getHandlerList() {
+    return handlers;
+  }
 }

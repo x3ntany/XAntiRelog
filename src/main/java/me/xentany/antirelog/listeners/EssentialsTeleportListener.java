@@ -8,18 +8,18 @@ import me.xentany.antirelog.manager.PvPManager;
 
 public class EssentialsTeleportListener implements Listener {
 
-    private final PvPManager pvpManager;
-    private final Settings settings;
+  private final PvPManager pvpManager;
+  private final Settings settings;
 
-    public EssentialsTeleportListener(PvPManager pvpManager, Settings settings) {
-        this.pvpManager = pvpManager;
-        this.settings = settings;
-    }
+  public EssentialsTeleportListener(PvPManager pvpManager, Settings settings) {
+    this.pvpManager = pvpManager;
+    this.settings = settings;
+  }
 
-    @EventHandler
-    public void onPreTeleport(PreTeleportEvent event) {
-        if (settings.isDisableTeleportsInPvp() && pvpManager.isInPvP(event.getTeleportee().getBase())) {
-            event.setCancelled(true);
-        }
+  @EventHandler
+  public void onPreTeleport(PreTeleportEvent event) {
+    if (settings.isDisableTeleportsInPvp() && pvpManager.isInPvP(event.getTeleportee().getBase())) {
+      event.setCancelled(true);
     }
+  }
 }
