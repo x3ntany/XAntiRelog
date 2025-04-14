@@ -1,5 +1,7 @@
 package me.xentany.antirelog.manager;
 
+import net.md_5.bungee.api.ChatMessageType;
+import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.command.Command;
@@ -13,10 +15,10 @@ import me.xentany.antirelog.event.PvpPreStartEvent.PvPStatus;
 import me.xentany.antirelog.event.PvpStartedEvent;
 import me.xentany.antirelog.event.PvpStoppedEvent;
 import me.xentany.antirelog.event.PvpTimeUpdateEvent;
-import me.xentany.antirelog.util.ActionBar;
 import me.xentany.antirelog.util.CommandMapUtils;
 import me.xentany.antirelog.util.Utils;
 import me.xentany.antirelog.util.VersionUtils;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
@@ -296,8 +298,8 @@ public class PvPManager {
     }
   }
 
-  private void sendActionBar(Player player, String message) {
-    ActionBar.sendAction(player, message);
+  private void sendActionBar(@NotNull Player player, String message) {
+    player.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(message));
   }
 
   public boolean isPvPModeEnabled() {
