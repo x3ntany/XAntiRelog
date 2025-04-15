@@ -35,6 +35,7 @@ public class AntiRelogPlugin extends JavaPlugin {
   @Override
   public void onDisable() {
     pvpManager.onPluginDisable();
+    cooldownManager.clearAll();
   }
 
   @Override
