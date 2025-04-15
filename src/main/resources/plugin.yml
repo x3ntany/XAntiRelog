@@ -10,7 +10,6 @@ softdepend:
   - WorldGuard
   - LibsDisguises
   - CMI
-  - ProtocolLib
 authors:
   - x3ntany
   - Leymooo

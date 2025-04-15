@@ -84,35 +84,30 @@
       <id>sonatype</id>
       <url>https://oss.sonatype.org/content/groups/public/</url>
     </repository>
-    <!--essentials -->
+    <!-- essentials -->
     <repository>
       <id>essentials-repository</id>
       <url>https://repo.essentialsx.net/releases/</url>
     </repository>
-    <!--worldguardwrapper -->
+    <!-- worldguardwrapper -->
     <repository>
       <id>codemc-repository</id>
       <url>https://repo.codemc.org/repository/maven-public/</url>
     </repository>
-    <!-- supervanish-->
+    <!-- supervanish -->
     <repository>
       <id>cubekrowd-repository</id>
       <url>https://mavenrepo.cubekrowd.net/atifactory/repo/</url>
     </repository>
-    <!-- vanishnopacket-->
+    <!-- vanishnopacket -->
     <repository>
       <id>kitteh-repository</id>
       <url>https://repo.minebench.de/</url>
     </repository>
-    <!--libsdisguises-->
+    <!-- libsdisguises -->
     <repository>
       <id>md_5-public</id>
       <url>https://repo.md-5.net/content/groups/public/</url>
-    </repository>
-    <!--protocollib-->
-    <repository>
-      <id>dmulloy2-repository</id>
-      <url>https://repo.dmulloy2.net/nexus/repository/public/</url>
     </repository>
     <repository>
       <id>elytrium-repository</id>
@@ -188,12 +183,6 @@
       <groupId>CMI-API</groupId>
       <artifactId>CMI-API</artifactId>
       <version>9.7.4.1</version>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>com.comphenix.protocol</groupId>
-      <artifactId>ProtocolLib</artifactId>
-      <version>5.3.0</version>
       <scope>provided</scope>
     </dependency>
     <dependency>

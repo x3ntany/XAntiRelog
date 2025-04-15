@@ -1,13 +1,11 @@
 package me.xentany.antirelog.manager;
 
-import com.comphenix.protocol.events.PacketContainer;
 import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.Table;
 import me.xentany.antirelog.Settings;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import me.xentany.antirelog.AntiRelogPlugin;
-import me.xentany.antirelog.util.ProtocolLibUtils;
 
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -19,15 +17,11 @@ public class CooldownManager {
   private final AntiRelogPlugin plugin;
   private final ScheduledExecutorService scheduledExecutorService;
   private final Table<Player, CooldownType, Long> cooldowns = HashBasedTable.create();
-  private final Table<Player, CooldownType, ScheduledFuture> futures = HashBasedTable.create();
+  private final Table<Player, CooldownType, ScheduledFuture<?>> futures = HashBasedTable.create();
 
   public CooldownManager(AntiRelogPlugin plugin) {
     this.plugin = plugin;
-    if (plugin.isProtocolLibEnabled()) {
-      scheduledExecutorService = Executors.newSingleThreadScheduledExecutor();
-    } else {
-      scheduledExecutorService = null;
-    }
+    scheduledExecutorService = Executors.newSingleThreadScheduledExecutor();
   }
 
   public void addCooldown(Player player, CooldownType type) {
@@ -35,34 +29,24 @@ public class CooldownManager {
   }
 
   public void addItemCooldown(Player player, CooldownType type, long duration) {
-    if (!plugin.isProtocolLibEnabled()) {
-      return;
-    }
     int durationInTicks = (int) Math.ceil(duration / 50.0);
 
-    PacketContainer packetContainer = ProtocolLibUtils.createCooldownPacket(type.getMaterial(), durationInTicks);
+    player.setCooldown(type.material, durationInTicks);
 
-    ProtocolLibUtils.sendPacket(packetContainer, player);
-
-
-    ScheduledFuture future = scheduledExecutorService.schedule(() -> {
+    ScheduledFuture<?> future = scheduledExecutorService.schedule(() -> {
       removeItemCooldown(player, type);
-      //futures.remove(player, type);
     }, duration, TimeUnit.MILLISECONDS);
     futures.put(player, type, future);
   }
 
   public void removeItemCooldown(Player player, CooldownType type) {
-    if (!plugin.isProtocolLibEnabled()) {
-      return;
-    }
-    ScheduledFuture future = futures.get(player, type);
+    ScheduledFuture<?> future = futures.get(player, type);
     if (future != null && !future.isCancelled()) {
       future.cancel(false);
       futures.remove(player, type);
     }
-    PacketContainer packetContainer1 = ProtocolLibUtils.createCooldownPacket(type.getMaterial(), 0);
-    ProtocolLibUtils.sendPacket(packetContainer1, player);
+
+    player.setCooldown(type.material, 0);
   }
 
   public void enteredToPvp(Player player) {

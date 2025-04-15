@@ -71,9 +71,10 @@ public class CooldownListener implements Listener {
       cooldownTime = Settings.IMP.CHORUS_COOLDOWN;
     }
     if (isGoldenOrEnchantedApple(consumeItem)) {
-      boolean enchanted = isEnchantedGoldenApple(consumeItem);
-      cooldownType = enchanted ? CooldownType.ENC_GOLDEN_APPLE : CooldownType.GOLDEN_APPLE;
-      cooldownTime = enchanted ? Settings.IMP.ENCHANTED_GOLDEN_APPLE_COOLDOWN : Settings.IMP.GOLDEN_APPLE_COOLDOWN;
+      boolean isEnchantedGoldenApple = isEnchantedGoldenApple(consumeItem);
+
+      cooldownType = isEnchantedGoldenApple ? CooldownType.ENC_GOLDEN_APPLE : CooldownType.GOLDEN_APPLE;
+      cooldownTime = isEnchantedGoldenApple ? Settings.IMP.ENCHANTED_GOLDEN_APPLE_COOLDOWN : Settings.IMP.GOLDEN_APPLE_COOLDOWN;
     }
 
     if (cooldownType != null) {

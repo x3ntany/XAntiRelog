@@ -181,8 +181,7 @@ public class PvPManager {
 
   }
 
-
-  private void startPvp(Player player, boolean bypassed, boolean attacker) {
+  public void startPvp(Player player, boolean bypassed, boolean attacker) {
     if (!bypassed) {
       String message = Utils.color(Settings.IMP.MESSAGES.PVP_STARTED);
       if (!message.isEmpty()) {
