@@ -31,7 +31,9 @@ public class CooldownManager {
   public void addItemCooldown(Player player, CooldownType type, long duration) {
     int durationInTicks = (int) Math.ceil(duration / 50.0);
 
-    player.setCooldown(type.material, durationInTicks);
+    // I know it's horrible, but I have to do it for the ender pearls and choruses.....
+    scheduledExecutorService.schedule(() ->
+        player.setCooldown(type.material, durationInTicks), 1, TimeUnit.MILLISECONDS);
 
     ScheduledFuture<?> future = scheduledExecutorService.schedule(() -> {
       removeItemCooldown(player, type);
