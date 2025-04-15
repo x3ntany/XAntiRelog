@@ -68,7 +68,7 @@ public class AntiRelogPlugin extends JavaPlugin {
     try {
       Class.forName("net.ess3.api.events.teleport.PreTeleportEvent");
       Bukkit.getPluginManager().registerEvents(new EssentialsTeleportListener(pvpManager), this);
-    } catch (ClassNotFoundException e) {
+    } catch (ClassNotFoundException ignored) {
     }
   }
 
