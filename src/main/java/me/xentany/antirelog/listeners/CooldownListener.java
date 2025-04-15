@@ -37,10 +37,14 @@ public class CooldownListener implements Listener {
 
   @EventHandler
   public void onEntityResurrect(final @NotNull EntityResurrectEvent event) {
-    if (event.getEntityType() != EntityType.PLAYER) {
+    if (!(event.getEntity() instanceof final Player player)) {
       return;
     }
-    Player player = (Player) event.getEntity();
+
+    if (!this.pvpManager.isInPvP(player)) {
+      return;
+    }
+
     long cooldownTime = Settings.IMP.TOTEM_COOLDOWN;
     if (cooldownTime == 0 || pvpManager.isBypassed(player)) {
       return;
@@ -55,11 +59,17 @@ public class CooldownListener implements Listener {
       return;
     }
     cooldownManager.addCooldown(player, CooldownType.TOTEM);
-    addItemCooldownIfNeeded(player, CooldownType.TOTEM);
+    addItemCooldown(player, CooldownType.TOTEM);
   }
 
   @EventHandler
-  public void onItemEat(PlayerItemConsumeEvent event) {
+  public void onItemEat(@NotNull PlayerItemConsumeEvent event) {
+    var player = event.getPlayer();
+
+    if (!this.pvpManager.isInPvP(player)) {
+      return;
+    }
+
     ItemStack consumeItem = event.getItem();
 
     CooldownType cooldownType = null;
@@ -78,62 +88,77 @@ public class CooldownListener implements Listener {
     }
 
     if (cooldownType != null) {
-      if (cooldownTime == 0 || pvpManager.isBypassed(event.getPlayer())) {
+      if (cooldownTime == 0 || pvpManager.isBypassed(player)) {
         return;
       }
       if (cooldownTime <= -1) {
-        cancelEventIfInPvp(event, cooldownType, event.getPlayer());
+        cancelEventIfInPvp(event, cooldownType, player);
         return;
       }
       cooldownTime = cooldownTime * 1000;
-      if (checkCooldown(event.getPlayer(), cooldownType, cooldownTime)) {
+      if (checkCooldown(player, cooldownType, cooldownTime)) {
         event.setCancelled(true);
         return;
       }
-      cooldownManager.addCooldown(event.getPlayer(), cooldownType);
-      addItemCooldownIfNeeded(event.getPlayer(), cooldownType);
+      cooldownManager.addCooldown(player, cooldownType);
+      addItemCooldown(player, cooldownType);
     }
 
   }
 
   @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
-  public void onPerlLaunch(ProjectileLaunchEvent e) {
-    if (Settings.IMP.ENDER_PEARL_COOLDOWN > 0 && e.getEntityType() == EntityType.ENDER_PEARL && e.getEntity().getShooter() instanceof Player) {
-      Player p = (Player) e.getEntity().getShooter();
-      if (!pvpManager.isBypassed(p)) {
-        cooldownManager.addCooldown(p, CooldownType.ENDER_PEARL);
-        addItemCooldownIfNeeded(p, CooldownType.ENDER_PEARL);
-      }
+  public void onPerlLaunch(ProjectileLaunchEvent event) {
+    if (!(event.getEntity().getShooter() instanceof final Player player)) {
+      return;
+    }
+
+    if (!this.pvpManager.isInPvP(player)) {
+      return;
+    }
+
+    if (Settings.IMP.ENDER_PEARL_COOLDOWN <= 0 || event.getEntityType() != EntityType.ENDER_PEARL) {
+      return;
+    }
+
+    if (!pvpManager.isBypassed(player)) {
+      cooldownManager.addCooldown(player, CooldownType.ENDER_PEARL);
+      addItemCooldown(player, CooldownType.ENDER_PEARL);
     }
   }
 
   @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = false)
   public void onInteract(PlayerInteractEvent event) {
+    var player = event.getPlayer();
+
+    if (!this.pvpManager.isInPvP(player)) {
+      return;
+    }
+
     if (Settings.IMP.ENDER_PEARL_COOLDOWN == 0 && Settings.IMP.FIREWORK_COOLDOWN == 0) return;
     if (!event.hasItem()) return;
-    if (pvpManager.isBypassed(event.getPlayer())) return;
+    if (pvpManager.isBypassed(player)) return;
 
     if (Settings.IMP.ENDER_PEARL_COOLDOWN != 0 && event.getItem().getType() == Material.ENDER_PEARL) {
       if (Settings.IMP.ENDER_PEARL_COOLDOWN <= -1) {
-        cancelEventIfInPvp(event, CooldownType.ENDER_PEARL, event.getPlayer());
+        cancelEventIfInPvp(event, CooldownType.ENDER_PEARL, player);
         return;
       }
-      if (checkCooldown(event.getPlayer(), CooldownType.ENDER_PEARL,
+      if (checkCooldown(player, CooldownType.ENDER_PEARL,
           Settings.IMP.ENDER_PEARL_COOLDOWN * 1000L)) {
         event.setCancelled(true);
       }
     } else if (Settings.IMP.FIREWORK_COOLDOWN != 0 && isFirework(event.getItem())) {
       if (Settings.IMP.FIREWORK_COOLDOWN <= -1) {
-        cancelEventIfInPvp(event, CooldownType.FIREWORK, event.getPlayer());
+        cancelEventIfInPvp(event, CooldownType.FIREWORK, player);
         return;
       }
 
-      if (checkCooldown(event.getPlayer(), CooldownType.FIREWORK, Settings.IMP.FIREWORK_COOLDOWN * 1000L)) {
+      if (checkCooldown(player, CooldownType.FIREWORK, Settings.IMP.FIREWORK_COOLDOWN * 1000L)) {
         event.setCancelled(true);
         return;
       }
-      cooldownManager.addCooldown(event.getPlayer(), CooldownType.FIREWORK);
-      addItemCooldownIfNeeded(event.getPlayer(), CooldownType.FIREWORK);
+      cooldownManager.addCooldown(player, CooldownType.FIREWORK);
+      addItemCooldown(player, CooldownType.FIREWORK);
     }
 
   }
@@ -212,14 +237,7 @@ public class CooldownListener implements Listener {
     return false;
   }
 
-  private void addItemCooldownIfNeeded(Player player, CooldownType cooldownType) {
-    if (pvpManager.isPvPModeEnabled()) {
-      if (pvpManager.isInPvP(player)) {
-        cooldownManager.addItemCooldown(player, cooldownType, cooldownType.getCooldown() * 1000L);
-      }
-    } else {
-      cooldownManager.addItemCooldown(player, cooldownType, cooldownType.getCooldown() * 1000L);
-    }
+  private void addItemCooldown(Player player, CooldownType cooldownType) {
+    cooldownManager.addItemCooldown(player, cooldownType, cooldownType.getCooldown() * 1000L);
   }
-
 }
