@@ -211,7 +211,7 @@ public class CooldownListener implements Listener {
 
   private void cancelEventIfInPvp(Cancellable event, CooldownType type, Player player) {
     if (pvpManager.isInPvP(player)) {
-      ((Cancellable) event).setCancelled(true);
+      event.setCancelled(true);
       String message = type == CooldownType.TOTEM ? Settings.IMP.MESSAGES.TOTEM_DISABLED_IN_PVP :
           Settings.IMP.MESSAGES.ITEM_DISABLED_IN_PVP;
       if (!message.isEmpty()) {
