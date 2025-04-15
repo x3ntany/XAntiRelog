@@ -1,6 +1,7 @@
 package me.xentany.antirelog.listeners;
 
 import me.xentany.antirelog.Settings;
+import me.xentany.antirelog.util.MessageUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.AreaEffectCloud;
@@ -31,7 +32,6 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import me.xentany.antirelog.manager.PvPManager;
-import me.xentany.antirelog.util.Utils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -132,15 +132,17 @@ public class PvPListener implements Listener {
   @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
   public void onCommand(PlayerCommandPreprocessEvent e) {
     if (Settings.IMP.DISABLE_COMMANDS_IN_PVP && pvpManager.isInPvP(e.getPlayer())) {
-      String command = e.getMessage().split(" ")[0].replaceFirst("/", "");
+      var command = e.getMessage().split(" ")[0].replaceFirst("/", "");
+
       if (pvpManager.isCommandWhiteListed(command)) {
         return;
       }
+
       e.setCancelled(true);
-      String message = Utils.color(Settings.IMP.MESSAGES.COMMANDS_DISABLED);
-      if (!message.isEmpty()) {
-        e.getPlayer().sendMessage(Utils.replaceTime(message, pvpManager.getTimeRemainingInPvP(e.getPlayer())));
-      }
+
+      var message = Settings.IMP.MESSAGES.COMMANDS_DISABLED;
+
+      MessageUtil.sendIfNotEmpty(e.getPlayer(), message, pvpManager.getTimeRemainingInPvP(e.getPlayer()));
     }
   }
 
@@ -226,18 +228,19 @@ public class PvPListener implements Listener {
   }
 
   private void sendLeavedInPvpMessage(Player p) {
-    String message = Utils.color(Settings.IMP.MESSAGES.PVP_LEAVED).replace("%player%", p.getName());
+    var message = Settings.IMP.MESSAGES.PVP_LEAVED;
+
     if (!message.isEmpty()) {
-      for (Player pl : Bukkit.getOnlinePlayers()) {
-        pl.sendMessage(message);
-      }
+      var component = MessageUtil.deserialize(message, p.getName());
+
+      Bukkit.getOnlinePlayers().forEach(pl -> pl.sendMessage(component));
     }
   }
 
   private void runCommands(Player leaved) {
     if (!Settings.IMP.COMMANDS_ON_LEAVE.isEmpty()) {
-      Settings.IMP.COMMANDS_ON_LEAVE.forEach(command -> Bukkit.dispatchCommand(Bukkit.getConsoleSender(),
-          Utils.color(command).replace("%player%", leaved.getName())));
+      Settings.IMP.COMMANDS_ON_LEAVE.forEach(command ->
+          Bukkit.dispatchCommand(Bukkit.getConsoleSender(), MessageUtil.format(command, leaved.getName())));
     }
   }
 

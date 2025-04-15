@@ -1,6 +1,8 @@
 package me.xentany.antirelog.manager;
 
 import me.xentany.antirelog.Settings;
+import me.xentany.antirelog.util.MessageUtil;
+import net.kyori.adventure.title.Title;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;
@@ -15,7 +17,6 @@ import me.xentany.antirelog.event.PvpPreStartEvent.PvPStatus;
 import me.xentany.antirelog.event.PvpStartedEvent;
 import me.xentany.antirelog.event.PvpStoppedEvent;
 import me.xentany.antirelog.event.PvpTimeUpdateEvent;
-import me.xentany.antirelog.util.Utils;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -183,10 +184,8 @@ public class PvPManager {
 
   public void startPvp(Player player, boolean bypassed, boolean attacker) {
     if (!bypassed) {
-      String message = Utils.color(Settings.IMP.MESSAGES.PVP_STARTED);
-      if (!message.isEmpty()) {
-        player.sendMessage(message);
-      }
+      MessageUtil.sendIfNotEmpty(player, Settings.IMP.MESSAGES.PVP_STARTED);
+
       if (attacker && Settings.IMP.DISABLE_POWERUPS) {
         powerUpsManager.disablePowerUpsWithRunCommands(player);
       }
@@ -202,9 +201,13 @@ public class PvPManager {
     } else {
       pvpMap.put(player, newTime);
       bossbarManager.setBossBar(player, newTime);
-      String actionBar = Settings.IMP.MESSAGES.IN_PVP_ACTIONBAR;
+
+      var actionBar = Settings.IMP.MESSAGES.IN_PVP_ACTIONBAR;
+
       if (!actionBar.isEmpty()) {
-        sendActionBar(player, Utils.color(Utils.replaceTime(actionBar, newTime)));
+        var component = MessageUtil.deserialize(actionBar, newTime);
+
+        player.sendActionBar(component);
       }
       if (Settings.IMP.DISABLE_POWERUPS) {
         powerUpsManager.disablePowerUps(player);
@@ -246,13 +249,14 @@ public class PvPManager {
   public void stopPvP(Player player) {
     stopPvPSilent(player);
     sendTitles(player, false);
-    String message = Utils.color(Settings.IMP.MESSAGES.PVP_STOPPED);
-    if (!message.isEmpty()) {
-      player.sendMessage(message);
-    }
-    String actionBar = Settings.IMP.MESSAGES.PVP_STOPPED_ACTIONBAR;
+    MessageUtil.sendIfNotEmpty(player, Settings.IMP.MESSAGES.PVP_STOPPED);
+
+    var actionBar = Settings.IMP.MESSAGES.PVP_STOPPED_ACTIONBAR;
+
     if (!actionBar.isEmpty()) {
-      sendActionBar(player, Utils.color(actionBar));
+      var component = MessageUtil.deserialize(actionBar);
+
+      player.sendActionBar(component);
     }
   }
 
@@ -279,19 +283,16 @@ public class PvPManager {
   }
 
   private void sendTitles(Player player, boolean isPvpStarted) {
-    String title = isPvpStarted ? Settings.IMP.MESSAGES.PVP_STARTED_TITLE : Settings.IMP.MESSAGES.PVP_STOPPED_TITLE;
-    String subtitle = isPvpStarted ? Settings.IMP.MESSAGES.PVP_STARTED_SUBTITLE : Settings.IMP.MESSAGES.PVP_STOPPED_SUBTITLE;
-    title = title.isEmpty() ? null : Utils.color(title);
-    subtitle = subtitle.isEmpty() ? null : Utils.color(subtitle);
-    if (title == null && subtitle == null) {
-      return;
-    }
-
-    player.sendTitle(title, subtitle, 10, 30, 10);
-  }
-
-  private void sendActionBar(@NotNull Player player, String message) {
-    player.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(message));
+    var stringTitle = isPvpStarted ?
+        Settings.IMP.MESSAGES.PVP_STARTED_TITLE :
+        Settings.IMP.MESSAGES.PVP_STOPPED_TITLE;
+    var stringSubtitle = isPvpStarted ?
+        Settings.IMP.MESSAGES.PVP_STARTED_SUBTITLE :
+        Settings.IMP.MESSAGES.PVP_STOPPED_SUBTITLE;
+    var componentTitle = MessageUtil.deserialize(stringTitle);
+    var componentSubtitle = MessageUtil.deserialize(stringSubtitle);
+    var title = Title.title(componentTitle, componentSubtitle);
+    player.showTitle(title);
   }
 
   public boolean isPvPModeEnabled() {

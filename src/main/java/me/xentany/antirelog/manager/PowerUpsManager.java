@@ -7,12 +7,12 @@ import com.earth2me.essentials.User;
 import de.myzelyam.api.vanish.VanishAPI;
 import me.libraryaddict.disguise.DisguiseAPI;
 import me.xentany.antirelog.Settings;
+import me.xentany.antirelog.util.MessageUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginManager;
 import org.kitteh.vanish.VanishPlugin;
-import me.xentany.antirelog.util.Utils;
 
 public class PowerUpsManager {
 
@@ -71,12 +71,10 @@ public class PowerUpsManager {
 
   public void disablePowerUpsWithRunCommands(Player player) {
     if (disablePowerUps(player) && !Settings.IMP.COMMANDS_ON_POWERUPS_DISABLE.isEmpty()) {
-      Settings.IMP.COMMANDS_ON_POWERUPS_DISABLE.forEach(command -> Bukkit.dispatchCommand(Bukkit.getConsoleSender(),
-          Utils.color(command.replace("%player%", player.getName()))));
-      String message = Settings.IMP.MESSAGES.PVP_STARTED_WITH_POWERUPS;
-      if (!message.isEmpty()) {
-        player.sendMessage(Utils.color(message));
-      }
+      Settings.IMP.COMMANDS_ON_POWERUPS_DISABLE.forEach(command ->
+          Bukkit.dispatchCommand(Bukkit.getConsoleSender(), MessageUtil.format(command, player.getName())));
+
+      MessageUtil.sendIfNotEmpty(player, Settings.IMP.MESSAGES.PVP_STARTED_WITH_POWERUPS);
     }
   }
 

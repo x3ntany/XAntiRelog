@@ -1,12 +1,10 @@
 package me.xentany.antirelog.manager;
 
 import me.xentany.antirelog.Settings;
+import me.xentany.antirelog.util.MessageUtil;
+import net.kyori.adventure.bossbar.BossBar;
 import org.bukkit.Bukkit;
-import org.bukkit.boss.BarColor;
-import org.bukkit.boss.BarStyle;
-import org.bukkit.boss.BossBar;
 import org.bukkit.entity.Player;
-import me.xentany.antirelog.util.Utils;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -18,14 +16,13 @@ public class BossbarManager {
   public void createBossBars() {
     bossBars.clear();
     if (Settings.IMP.PVP_TIME > 0) {
-      String title = Utils.color(Settings.IMP.MESSAGES.IN_PVP_BOSSBAR);
+      String title = Settings.IMP.MESSAGES.IN_PVP_BOSSBAR;
       if (!title.isEmpty()) {
-        double add = 1d / (double) Settings.IMP.PVP_TIME;
-        double progress = add;
+        var add = 1d / (double) Settings.IMP.PVP_TIME;
+        var progress = add;
         for (int i = 1; i <= Settings.IMP.PVP_TIME; i++) {
-          String actualTitle = Utils.replaceTime(title, i);
-          BossBar bar = Bukkit.createBossBar(actualTitle, BarColor.RED, BarStyle.SOLID);
-          bar.setProgress(progress);
+          var component = MessageUtil.deserialize(title, i);
+          BossBar bar = BossBar.bossBar(component, (float) progress, Settings.IMP.BOSSBAR_COLOR, Settings.IMP.BOSSBAR_OVERLAY );
           progress += add;
           bossBars.put(i, bar);
           if (progress > 1.000d) {
@@ -38,24 +35,22 @@ public class BossbarManager {
 
   public void setBossBar(Player player, int time) {
     if (!bossBars.isEmpty()) {
-      for (BossBar bar : bossBars.values()) {
-        bar.removePlayer(player);
-      }
-      bossBars.get(time).addPlayer(player);
+      bossBars.values().forEach(player::hideBossBar);
+      player.showBossBar(bossBars.get(time));
     }
   }
 
   public void clearBossbar(Player player) {
     for (BossBar bar : bossBars.values()) {
-      bar.removePlayer(player);
+      player.hideBossBar(bar);
     }
   }
 
   public void clearBossbars() {
     if (!bossBars.isEmpty()) {
-      for (BossBar bar : bossBars.values()) {
-        bar.removeAll();
-      }
+      Bukkit.getOnlinePlayers()
+          .forEach(player ->
+              bossBars.values().forEach(player::hideBossBar));
     }
     bossBars.clear();
   }

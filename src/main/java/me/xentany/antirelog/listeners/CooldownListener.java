@@ -1,6 +1,7 @@
 package me.xentany.antirelog.listeners;
 
 import me.xentany.antirelog.Settings;
+import me.xentany.antirelog.util.MessageUtil;
 import org.bukkit.Material;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
@@ -20,7 +21,6 @@ import me.xentany.antirelog.event.PvpStoppedEvent;
 import me.xentany.antirelog.manager.CooldownManager;
 import me.xentany.antirelog.manager.CooldownManager.CooldownType;
 import me.xentany.antirelog.manager.PvPManager;
-import me.xentany.antirelog.util.Utils;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.concurrent.TimeUnit;
@@ -126,7 +126,7 @@ public class CooldownListener implements Listener {
     }
   }
 
-  @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = false)
+  @EventHandler(priority = EventPriority.HIGHEST)
   public void onInteract(PlayerInteractEvent event) {
     var player = event.getPlayer();
 
@@ -212,26 +212,24 @@ public class CooldownListener implements Listener {
   private void cancelEventIfInPvp(Cancellable event, CooldownType type, Player player) {
     if (pvpManager.isInPvP(player)) {
       event.setCancelled(true);
-      String message = type == CooldownType.TOTEM ? Settings.IMP.MESSAGES.TOTEM_DISABLED_IN_PVP :
+      var message = type == CooldownType.TOTEM ?
+          Settings.IMP.MESSAGES.TOTEM_DISABLED_IN_PVP :
           Settings.IMP.MESSAGES.ITEM_DISABLED_IN_PVP;
-      if (!message.isEmpty()) {
-        player.sendMessage(Utils.color(message));
-      }
+
+      MessageUtil.sendIfNotEmpty(player, message);
     }
-    return;
   }
 
   private boolean checkCooldown(Player player, CooldownType cooldownType, long cooldownTime) {
     boolean cooldownActive = !pvpManager.isPvPModeEnabled() || pvpManager.isInPvP(player);
     if (cooldownActive && cooldownManager.hasCooldown(player, cooldownType, cooldownTime)) {
-      long remaining = cooldownManager.getRemaining(player, cooldownType, cooldownTime);
-      int remainingInt = (int) TimeUnit.MILLISECONDS.toSeconds(remaining);
-      String message = cooldownType == CooldownType.TOTEM ? Settings.IMP.MESSAGES.TOTEM_COOLDOWN :
+      var remainingMilliseconds = cooldownManager.getRemaining(player, cooldownType, cooldownTime);
+      var remainingSeconds = TimeUnit.MILLISECONDS.toSeconds(remainingMilliseconds);
+      var message = cooldownType == CooldownType.TOTEM ?
+          Settings.IMP.MESSAGES.TOTEM_COOLDOWN :
           Settings.IMP.MESSAGES.ITEM_COOLDOWN;
-      if (!message.isEmpty()) {
-        player.sendMessage(Utils.color(Utils.replaceTime(message.replace("%time%",
-            Math.round(remaining / 1000) + ""), remainingInt)));
-      }
+
+      MessageUtil.sendIfNotEmpty(player, message, remainingSeconds);
       return true;
     }
     return false;
